@@ -8,9 +8,12 @@ import {
   ScrollView,
   TextInput,
   StatusBar,
+  Platform,
   Alert
 } from 'react-native';
 import { SyncClient } from './src/sync';
+
+const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight || 40) : 0;
 
 export default function App() {
   // Navigation State
@@ -104,7 +107,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#EED8B8" />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
 
       {/* TOP APP BAR */}
       <View style={styles.topAppBar}>
@@ -698,8 +701,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#DEC8A5',
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 10,
+    paddingTop: STATUSBAR_HEIGHT + 16,
+    paddingBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
