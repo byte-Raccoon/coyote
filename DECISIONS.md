@@ -73,7 +73,7 @@ version
 
 ## D012 — Mobile application framework
 **Status:** Accepted
-- Framework: React Native (Expo)
+- Framework: React Native (Expo SDK 57)
 - Styling: Tailwind (NativeWind) to match the Coyote Desert design system
 - Local storage: SQLite for offline capabilities
 
