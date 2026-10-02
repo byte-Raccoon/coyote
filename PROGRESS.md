@@ -19,6 +19,7 @@
 - [x] Implemented React + Tailwind web app on port `3333` with Coyote Desert Workspace design.
 - [x] Connected web frontend state to live backend REST & sync endpoints (`/api/tasks`, `/api/notes`, `/api/health`).
 - [x] Implemented React Native (Expo) mobile application structure for OnePlus (`mobile/App.js`, `mobile/src/sync.js`).
+- [x] Installed and verified Expo environment and dependencies for `mobile/`.
 - [x] Verified Vite frontend production build and FastAPI backend database/sync models.
 
 ## In progress
