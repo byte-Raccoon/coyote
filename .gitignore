@@ -27,6 +27,8 @@ ENV/
 *.sqlite
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
 
 # React Native / Expo
 .expo/

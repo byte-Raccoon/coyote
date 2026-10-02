@@ -4,14 +4,15 @@
 Establish the Coyote project foundation from `PROJECT.md`.
 
 ## Immediate goals
-- [ ] Initialize Git repository, `.gitignore`, and configure remote `https://github.com/byte-Raccoon/coyote.git`.
-- [ ] Create project structure (`backend/`, `web/`, `mobile/`).
+- [x] Initialize Git repository, `.gitignore`, and configure remote `https://github.com/byte-Raccoon/coyote.git`.
+- [x] Create project structure (`backend/`, `web/`, `mobile/`).
 - [x] Choose and document the technology stack (React + Tailwind, React Native, FastAPI, SQLite).
 - [x] Define the synchronization architecture (Local Wi-Fi / Hotspot REST API).
-- [ ] Define the high-level shared data model.
-- [ ] Establish the backend API on `0.0.0.0:3335`.
-- [ ] Establish the macOS frontend experience on `localhost:3333`.
-- [ ] Establish the Android application foundation.
+- [x] Define the high-level shared data model.
+- [x] Establish the backend API on `0.0.0.0:3335`.
+- [x] Establish the macOS frontend experience on `localhost:3333`.
+- [ ] Establish the Android application foundation (React Native Expo template).
+- [ ] Connect web client interactive state directly to backend REST endpoints.
 - [ ] Build a minimal end-to-end sync path.
 - [ ] Build the first usable Dashboard on both platforms.
 

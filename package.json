@@ -1,0 +1,11 @@
+{
+  "name": "coyote",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multiplatform notes and to-do workspace for macOS and OnePlus Android",
+  "scripts": {
+    "dev:web": "npm run dev --prefix web",
+    "dev:backend": "backend/.venv/bin/python3 backend/run.py",
+    "build:web": "npm run build --prefix web"
+  }
+}
