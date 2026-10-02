@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Coyote",
+    "slug": "coyote",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#EED8B8"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#EED8B8"
+      },
+      "package": "com.coyote.app"
+    }
+  }
+}

@@ -11,40 +11,40 @@ Establish the Coyote project foundation from `PROJECT.md`.
 - [x] Define the high-level shared data model.
 - [x] Establish the backend API on `0.0.0.0:3335`.
 - [x] Establish the macOS frontend experience on `localhost:3333`.
-- [ ] Establish the Android application foundation (React Native Expo template).
-- [ ] Connect web client interactive state directly to backend REST endpoints.
-- [ ] Build a minimal end-to-end sync path.
-- [ ] Build the first usable Dashboard on both platforms.
+- [x] Establish the Android application foundation (React Native Expo template).
+- [x] Connect web client interactive state directly to backend REST endpoints.
+- [x] Build a minimal end-to-end sync path.
+- [x] Build the first usable Dashboard on both platforms.
 
 ## macOS features
-- [ ] Dashboard
-- [ ] Daily Task
-- [ ] Weekly Task
-- [ ] Yearly Task
-- [ ] Journal
-- [ ] Academic
-- [ ] DSA
-- [ ] Project Ideas
-- [ ] General Notes
+- [x] Dashboard
+- [x] Daily Task
+- [x] Weekly Task
+- [x] Yearly Task
+- [x] Journal
+- [x] Academic
+- [x] DSA
+- [x] Project Ideas
+- [x] General Notes
 
 ## Android features
-- [ ] Dashboard
-- [ ] Weekly Planner
-- [ ] Monthly Planner
-- [ ] Yearly Planner
-- [ ] DSA Target
-- [ ] Academic Target
-- [ ] Vault / Journal
-- [ ] Vault / Project Ideas
-- [ ] Vault / General Notes
+- [x] Dashboard
+- [x] Weekly Planner
+- [x] Monthly Planner
+- [x] Yearly Planner
+- [x] DSA Target
+- [x] Academic Target
+- [x] Vault / Journal
+- [x] Vault / Project Ideas
+- [x] Vault / General Notes
 
 ## Sync
-- [ ] Decide source of truth.
-- [ ] Decide sync mechanism.
-- [ ] Decide offline behaviour.
-- [ ] Decide conflict handling.
-- [ ] Implement basic sync.
-- [ ] Verify data consistency across both devices.
+- [x] Decide source of truth (Mac SQLite as canonical hub, client as offline-first replica).
+- [x] Decide sync mechanism (Local Wi-Fi / Hotspot REST push & pull).
+- [x] Decide offline behaviour (Offline storage with version metadata).
+- [x] Decide conflict handling (Version + updated_at LWW resolution).
+- [x] Implement basic sync.
+- [ ] Verify data consistency across physical OnePlus device over live hotspot.
 
 ## Agent-learning track
 - [ ] Skills

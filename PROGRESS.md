@@ -17,14 +17,16 @@
 - [x] Established monorepo layout: `backend/`, `web/`, and `mobile/`.
 - [x] Implemented FastAPI backend on port `3335` with SQLite WAL mode, health check, tasks, notes, and sync endpoints.
 - [x] Implemented React + Tailwind web app on port `3333` with Coyote Desert Workspace design.
+- [x] Connected web frontend state to live backend REST & sync endpoints (`/api/tasks`, `/api/notes`, `/api/health`).
+- [x] Implemented React Native (Expo) mobile application structure for OnePlus (`mobile/App.js`, `mobile/src/sync.js`).
 - [x] Verified Vite frontend production build and FastAPI backend database/sync models.
 
 ## In progress
-- Connecting frontend state to backend REST & sync endpoints.
-- Scaffolding the React Native mobile application for OnePlus.
+- Testing physical sync over local Wi-Fi / Hotspot between Mac and OnePlus device.
+- Agent engineering learning track (Skills, Hooks, MCP, Subagents).
 
 ## Next step
-- Connect web frontend live task/note creation to the FastAPI backend API on port 3335.
+- Launch both services locally and verify multiplatform workflow.
 
 ## State
 ```text
@@ -32,9 +34,9 @@ Product definition      ✓
 Architecture            ✓
 Technology stack        ✓
 Database/data model     ✓
-Sync implementation     In progress (REST endpoints ready)
-macOS implementation    ✓ (Foundation running on 3333)
-Android implementation   In progress (Architecture defined)
+Sync implementation     ✓ (REST sync endpoints & client ready)
+macOS implementation    ✓ (Port 3333, live interactive CRUD)
+Android implementation   ✓ (React Native foundation ready)
 Agent infrastructure    Not started
 ```
 
