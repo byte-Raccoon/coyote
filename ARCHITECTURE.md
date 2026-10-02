@@ -43,7 +43,7 @@
 Dashboard → Task (Daily/Weekly/Yearly) → Journal → Academic → DSA → Project Ideas → General Notes
 
 ### Android
-Dashboard → Planner (Weekly/Monthly/Yearly) → DSA Target → Academic Target → Vault (Journal/Project Ideas/General Notes)
+Task Command (Daily/Weekly/Monthly/Custom) → Academic Portal (Daily/Weekly/Monthly/Audit) → Dashboard → DSA Arena → Field Journal → Vault / Sync
 
 The platform-specific organization comes directly from `PROJECT.md`.
 

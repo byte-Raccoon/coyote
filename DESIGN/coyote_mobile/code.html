@@ -1,0 +1,917 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>Coyote Mobile Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=JetBrains+Mono:wght@300..700&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "sand-bg": "#EED8B8",
+        "card-surface": "#FFFBF7",
+        "card-surface-alt": "#F5E6D3",
+        "card-surface-low": "#E8D3B9",
+        "primary": "#D9531E",
+        "primary-hover": "#C24513",
+        "primary-light": "#FDECE5",
+        "desert-dark": "#2A1D15",
+        "desert-muted": "#756252",
+        "desert-border": "#DEC8A5",
+        "sage": "#3E6A5E",
+        "sage-light": "#E3EFEA",
+        "sidebar-bg": "#211914"
+      },
+      fontFamily: {
+        "headline": ["Space Grotesk", "sans-serif"],
+        "body": ["Hanken Grotesk", "sans-serif"],
+        "mono": ["JetBrains Mono", "monospace"]
+      }
+    }
+  }
+};
+</script>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #EED8B8;
+    color: #2A1D15;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  /* iOS safe area adjustments */
+  .pt-safe { padding-top: env(safe-area-inset-top, 16px); }
+  .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 20px), 16px); }
+</style>
+</head>
+<body class="bg-sand-bg font-body antialiased flex flex-col min-h-screen text-desert-dark max-w-md mx-auto relative shadow-2xl overflow-x-hidden border-x border-desert-border/60">
+<!-- ================= TOP APP BAR ================= -->
+<header class="sticky top-0 z-40 bg-sand-bg/95 backdrop-blur-md border-b border-desert-border/80 px-4 pt-3 pb-2.5 flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<!-- Mascot + Title -->
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full overflow-hidden bg-primary/20 ring-2 ring-primary/40 flex items-center justify-center shrink-0 shadow-sm">
+<img alt="Willie Coyote" class="w-full h-full object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCor9Vtalsbp7RA1cYMuyl07nAds6p69An0fNSNp_vrEKO7KiLU7hPMUsIyTHfcsEhfNDMw2d1pJshwsuTMEonSwO_qjq2WFKwCjSuuEAESBgkDzvOINPwifmX_gGofAYEajL8gYzTs2vPTXMwQpLBMjwN-RudumCPlH3FLy8wU0S_1jU-w26ZkoyxNnRWGwlbFcaSCcganQVenVxcBDumeDehQtKZ6SjM0lQ0UYjO3XAlnjwRVCkToQC1Go_f4fx5GYg">
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-headline font-bold text-base tracking-wider uppercase text-desert-dark leading-tight">COYOTE</span>
+<span class="font-mono text-[9px] px-1 py-0.5 rounded bg-primary/10 text-primary font-bold tracking-widest border border-primary/20">V2.4</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-mono text-desert-muted">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="">Desert Grid Active</span>
+</div>
+</div>
+</div>
+<!-- Active View Badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card-surface border border-desert-border shadow-xs">
+<span class="font-mono text-[10px] uppercase font-bold text-primary" id="mobileActiveBadge">DSA Arena</span>
+</div>
+</div>
+<!-- Quick Horizon Pill Subheader (Horizontally scrollable view tabs) -->
+
+</header>
+<!-- ================= MAIN SCROLL CONTENT ================= -->
+<main class="flex-1 px-4 py-4 pb-28 flex flex-col gap-4 overflow-y-auto">
+<!-- ==============================================
+         VIEW 1: TASK COMMAND OPERATIONS (DEFAULT)
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-4 hidden" id="page-task">
+<!-- Section Banner & Filter Tabs -->
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">task_alt</span>
+<h2 class="font-headline font-bold text-lg text-desert-dark">Task Command</h2>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">MST Sector 7</span>
+</div>
+<!-- 4-Category Pill Selector -->
+<div class="grid grid-cols-4 gap-1 p-1 bg-card-surface-alt rounded-xl border border-desert-border/70" id="taskCategoryTabs">
+<button class="task-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center gap-1 transition-all hover:bg-card-surface" id="btn-task-daily" onclick="switchTaskCategory('daily')">
+<span class="">Daily</span>
+<span class="text-[9px] bg-black/20 px-1 rounded" id="taskDailyBadgeCount">4</span>
+</button>
+<button class="task-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center gap-1 transition-all hover:bg-card-surface" id="btn-task-weekly" onclick="switchTaskCategory('weekly')">
+<span class="">Weekly</span>
+<span class="text-[9px] bg-card-surface-low px-1 rounded">5</span>
+</button>
+<button class="task-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center gap-1 transition-all hover:bg-card-surface" id="btn-task-monthly" onclick="switchTaskCategory('monthly')">
+<span class="">Monthly</span>
+<span class="text-[9px] bg-card-surface-low px-1 rounded">3</span>
+</button>
+<button class="task-pill py-2 px-1 text-center rounded-lg bg-primary text-white font-mono text-xs font-semibold shadow-xs flex items-center justify-center gap-1 transition-all" id="btn-task-custom" onclick="switchTaskCategory('custom')">
+<span class="">Custom</span>
+</button>
+</div>
+</div>
+<!-- 1. TASK: DAILY VIEW -->
+<div class="task-subpanel flex flex-col gap-4 hidden" id="task-subview-daily">
+<!-- Compact Summary Row -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Daily Execution Ring -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Daily Completion</span>
+<span class="font-headline text-2xl font-bold text-desert-dark" id="taskSummaryRatio">3/4</span>
+<span class="font-mono text-[11px] text-primary font-semibold" id="taskSummaryPercent">75% Done</span>
+</div>
+<div class="relative w-11 h-11 flex items-center justify-center">
+<svg class="w-11 h-11 -rotate-90" viewBox="0 0 40 40">
+<circle class="text-card-surface-alt" cx="20" cy="20" fill="none" r="16" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary transition-all duration-300" cx="20" cy="20" fill="none" id="taskProgressCircle" r="16" stroke="currentColor" stroke-dasharray="100.53" stroke-dashoffset="25.13" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute font-mono text-[10px] text-desert-dark font-bold" id="taskCircleText">75%</span>
+</div>
+</div>
+<!-- Urgent Priority -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Urgent Priority</span>
+<span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+</div>
+<span class="font-headline text-2xl font-bold text-[#B22915]" id="urgentTaskCount">1 Task</span>
+<span class="font-mono text-[10px] text-desert-muted">Must resolve by 21:00</span>
+</div>
+</div>
+<!-- Add Task Quick Input Form -->
+<div class="bg-card-surface p-2.5 rounded-xl border border-desert-border flex items-center gap-2 shadow-xs">
+<input class="flex-1 bg-transparent text-desert-dark placeholder:text-desert-muted/70 text-xs font-body px-2 py-1.5 focus:outline-none min-h-[40px]" id="taskInputDaily" placeholder="Add tactical daily objective..." type="text">
+<button class="h-10 px-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-mono text-xs font-semibold rounded-lg flex items-center gap-1 shadow-xs transition-transform shrink-0" onclick="addTaskDirect('daily')">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span class="">Add</span>
+</button>
+</div>
+<!-- CHRONOLOGICAL DAILY TIMELINE SCHEDULE -->
+<div class="bg-card-surface rounded-2xl p-4 border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between pb-2 border-b border-desert-border/70">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+<h3 class="font-headline font-bold text-sm text-desert-dark">Daily Timeline Schedule</h3>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">Oct 24, 2024</span>
+</div>
+<!-- Timeline items -->
+<div class="flex flex-col gap-3 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-desert-border/60" id="dailyTaskListContainer">
+<!-- Item 1 (09:00 - Done) -->
+<div class="task-row flex items-start gap-3 pl-1 relative group">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-sage-light border border-sage text-sage flex items-center justify-center shrink-0 z-10">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" onchange="toggleTaskDone(this)" type="checkbox">
+</div>
+<div class="flex-1 bg-card-surface-alt/70 p-3 rounded-xl border border-desert-border/80 flex flex-col gap-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-mono text-[10px] font-bold text-desert-muted">09:00 MST</span>
+<span class="px-1.5 py-0.5 rounded-full bg-sage-light text-sage font-mono text-[9px] font-bold">Done</span>
+</div>
+<span class="task-title font-body font-semibold text-desert-dark text-xs line-through opacity-70">Telemetry Standup &amp; Sector Check-in</span>
+<span class="font-mono text-[10px] text-desert-muted">Grid baseline verified across all sensors</span>
+</div>
+</div>
+<!-- Item 2 (10:30 - Done) -->
+<div class="task-row flex items-start gap-3 pl-1 relative group">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-sage-light border border-sage text-sage flex items-center justify-center shrink-0 z-10">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" onchange="toggleTaskDone(this)" type="checkbox">
+</div>
+<div class="flex-1 bg-card-surface-alt/70 p-3 rounded-xl border border-desert-border/80 flex flex-col gap-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-mono text-[10px] font-bold text-desert-muted">10:30 MST</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-light text-primary font-mono text-[9px] font-bold border border-primary/20">Urgent</span>
+</div>
+<span class="task-title font-body font-semibold text-desert-dark text-xs line-through opacity-70">Calibrate ultrasonic Doppler velocity radar</span>
+<span class="font-mono text-[10px] text-desert-muted">Hardware testing in Canyon Gap</span>
+</div>
+</div>
+<!-- Item 3 (14:00 - Done) -->
+<div class="task-row flex items-start gap-3 pl-1 relative group">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-sage-light border border-sage text-sage flex items-center justify-center shrink-0 z-10">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" onchange="toggleTaskDone(this)" type="checkbox">
+</div>
+<div class="flex-1 bg-card-surface-alt/70 p-3 rounded-xl border border-desert-border/80 flex flex-col gap-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-mono text-[10px] font-bold text-desert-muted">14:00 MST</span>
+<span class="px-1.5 py-0.5 rounded-full bg-sage-light text-sage font-mono text-[9px] font-bold">Algorithms</span>
+</div>
+<span class="task-title font-body font-semibold text-desert-dark text-xs line-through opacity-70">Implement Dijkstra edge relaxation for topological mesh</span>
+<span class="font-mono text-[10px] text-desert-muted">Verified 2 LeetCode medium cases</span>
+</div>
+</div>
+<!-- Item 4 (21:00 - Pending Urgent) -->
+<div class="task-row flex items-start gap-3 pl-1 relative group">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-card-surface border-2 border-primary text-primary flex items-center justify-center shrink-0 z-10">
+<input class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" onchange="toggleTaskDone(this)" type="checkbox">
+</div>
+<div class="flex-1 bg-card-surface-alt/90 p-3 rounded-xl border border-primary/30 flex flex-col gap-1 shadow-xs">
+<div class="flex items-center justify-between gap-1">
+<span class="font-mono text-[10px] font-bold text-primary">21:00 MST (Tonight)</span>
+<span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 font-mono text-[9px] font-bold border border-red-200">Urgent</span>
+</div>
+<span class="task-title font-body font-bold text-desert-dark text-xs">Review CS 641 Midterm practice exam Q1-5</span>
+<span class="font-mono text-[10px] text-desert-muted">Paxos vs Raft trade-off analysis &amp; leader election</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. TASK: WEEKLY VIEW -->
+<div class="task-subpanel flex flex-col gap-3.5 hidden" id="task-subview-weekly">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-2.5">
+<div class="flex justify-between items-center">
+<span class="font-mono text-xs font-semibold text-desert-muted uppercase">Sprint Week 43 Horizon</span>
+<span class="font-mono text-xs font-bold text-primary">68% Target</span>
+</div>
+<div class="h-2 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[68%]"></div>
+</div>
+<div class="flex justify-between text-[11px] font-mono text-desert-muted">
+<span class="">17/25 Milestones</span>
+<span class="">3 Days Left</span>
+</div>
+</div>
+<!-- Weekly Track Objectives -->
+<div class="flex flex-col gap-2.5">
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-mono text-[10px] text-primary font-bold uppercase">Systems Mastery</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-light text-primary font-mono text-[9px] font-bold">80%</span>
+</div>
+<h4 class="font-headline font-bold text-xs text-desert-dark">Finalize Distributed Consensus Benchmark</h4>
+<p class="font-body text-[11px] text-desert-muted">Benchmark network partitions across 5 nodes with Poisson latencies.</p>
+<span class="font-mono text-[10px] text-primary">Deadline: Friday 18:00</span>
+</div>
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-mono text-[10px] text-sage font-bold uppercase">Algorithmic Sprint</span>
+<span class="px-1.5 py-0.5 rounded bg-sage-light text-sage font-mono text-[9px] font-bold">9/12 Done</span>
+</div>
+<h4 class="font-headline font-bold text-xs text-desert-dark">Solve 12 Graph Traversal Problems</h4>
+<p class="font-body text-[11px] text-desert-muted">Focus on Tarjan's SCC and Kahn's topological sort.</p>
+<span class="font-mono text-[10px] text-sage">Target: Saturday</span>
+</div>
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-mono text-[10px] text-desert-muted font-bold uppercase">CS 782 Machine Learning</span>
+<span class="px-1.5 py-0.5 rounded bg-card-surface-low text-desert-dark font-mono text-[9px] font-bold">50%</span>
+</div>
+<h4 class="font-headline font-bold text-xs text-desert-dark">Autonomous Vision Pset #3</h4>
+<p class="font-body text-[11px] text-desert-muted">Implement backprop from scratch in PyTorch tensors with Adam.</p>
+<span class="font-mono text-[10px] text-desert-muted">Due: Sunday 23:59</span>
+</div>
+</div>
+</div>
+<!-- 3. TASK: MONTHLY VIEW -->
+<div class="task-subpanel flex flex-col gap-3.5 hidden" id="task-subview-monthly">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<span class="font-headline font-bold text-sm text-desert-dark">October Monthly Quotas</span>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-xs font-mono">
+<span class="">DSA Quota (24/30 Solved)</span>
+<span class="font-bold text-primary">80%</span>
+</div>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[80%]"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-xs font-mono">
+<span class="">Course Architecture Reviews (3/4)</span>
+<span class="font-bold text-sage">75%</span>
+</div>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-sage w-[75%]"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-xs font-mono">
+<span class="">Semester Project Milestone</span>
+<span class="font-bold text-[#D9531E]">100%</span>
+</div>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-terracotta w-[100%]"></div>
+</div>
+</div>
+</div>
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-2.5">
+<span class="font-headline font-bold text-sm text-desert-dark">Horizon Calendar</span>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex items-center justify-between">
+<div>
+<span class="font-mono text-[10px] text-primary font-bold">OCT 27 • 3 Days Away</span>
+<h5 class="font-body font-bold text-xs text-desert-dark">Distributed Systems Midterm Exam</h5>
+</div>
+<span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-mono text-[9px] font-bold">Critical</span>
+</div>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex items-center justify-between">
+<div>
+<span class="font-mono text-[10px] text-sage font-bold">NOV 02 • 9 Days Away</span>
+<h5 class="font-body font-bold text-xs text-desert-dark">Autonomous Neural Vision Draft</h5>
+</div>
+<span class="px-2 py-0.5 rounded bg-sage-light text-sage font-mono text-[9px] font-bold">In Prep</span>
+</div>
+</div>
+</div>
+<!-- 4. TASK: CUSTOM VIEW -->
+<div class="task-subpanel flex flex-col gap-3.5" id="task-subview-custom">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-2.5">
+<span class="font-headline font-bold text-sm text-desert-dark">Filter By Domain Tag</span>
+<div class="flex flex-wrap gap-1.5">
+<button class="task-filter-tag px-2.5 py-1 rounded-lg bg-primary text-white font-mono text-xs font-bold" onclick="filterTaskCustomTag(this, 'all')">#All</button>
+<button class="task-filter-tag px-2.5 py-1 rounded-lg bg-card-surface-alt text-desert-dark font-mono text-xs" onclick="filterTaskCustomTag(this, 'systems')">#Systems</button>
+<button class="task-filter-tag px-2.5 py-1 rounded-lg bg-card-surface-alt text-desert-dark font-mono text-xs" onclick="filterTaskCustomTag(this, 'algorithms')">#Algorithms</button>
+<button class="task-filter-tag px-2.5 py-1 rounded-lg bg-card-surface-alt text-desert-dark font-mono text-xs" onclick="filterTaskCustomTag(this, 'academic')">#Academic</button>
+</div>
+</div>
+<div class="flex flex-col gap-2" id="taskCustomList">
+<div class="task-custom-item bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between" data-tag="systems">
+<div class="flex flex-col">
+<span class="font-body font-semibold text-xs text-desert-dark">Distributed Paxos synod simulation</span>
+<span class="font-mono text-[10px] text-desert-muted">Tag: #Systems • High Priority</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-light text-primary font-mono text-[10px] font-bold">P1</span>
+</div>
+<div class="task-custom-item bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between" data-tag="algorithms">
+<div class="flex flex-col">
+<span class="font-body font-semibold text-xs text-desert-dark">Monotonic deque sliding window bench</span>
+<span class="font-mono text-[10px] text-desert-muted">Tag: #Algorithms • O(N) optimization</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-sage-light text-sage font-mono text-[10px] font-bold">P2</span>
+</div>
+<div class="task-custom-item bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between" data-tag="academic">
+<div class="flex flex-col">
+<span class="font-body font-semibold text-xs text-desert-dark">CS 641 Midterm study flashcards</span>
+<span class="font-mono text-[10px] text-desert-muted">Tag: #Academic • Hall 3B</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-mono text-[10px] font-bold">P1</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==============================================
+         VIEW 2: ACADEMIC & SEMESTER COURSE PORTAL
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-4 hidden" id="page-academic">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">school</span>
+<h2 class="font-headline font-bold text-lg text-desert-dark">Academic Portal</h2>
+</div>
+<span class="font-mono text-xs font-bold text-sage bg-sage-light px-2 py-0.5 rounded border border-sage/20">GPA 3.94</span>
+</div>
+<!-- Academic 4-Pill Horizon Selector -->
+<div class="grid grid-cols-4 gap-1 p-1 bg-card-surface-alt rounded-xl border border-desert-border/70" id="acadCategoryTabs">
+<button class="acad-pill py-2 px-1 text-center rounded-lg bg-primary text-white font-mono text-xs font-semibold shadow-xs flex items-center justify-center transition-all" id="btn-acad-daily" onclick="switchAcadCategory('daily')">
+<span class="">Daily</span>
+</button>
+<button class="acad-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center transition-all hover:bg-card-surface" id="btn-acad-weekly" onclick="switchAcadCategory('weekly')">
+<span class="">Weekly</span>
+</button>
+<button class="acad-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center transition-all hover:bg-card-surface" id="btn-acad-monthly" onclick="switchAcadCategory('monthly')">
+<span class="">Monthly</span>
+</button>
+<button class="acad-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center transition-all hover:bg-card-surface" id="btn-acad-custom" onclick="switchAcadCategory('custom')">
+<span class="">Audit</span>
+</button>
+</div>
+</div>
+<!-- ACADEMIC: DAILY SUBVIEW -->
+<div class="acad-subpanel flex flex-col gap-3.5" id="acad-subview-daily">
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex flex-col gap-0.5">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Today's Lectures</span>
+<span class="font-headline text-2xl font-bold text-desert-dark">2 Blocks</span>
+<span class="font-mono text-[10px] text-primary">CS 641 &amp; MATH 480</span>
+</div>
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex flex-col gap-0.5">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Study Goal</span>
+<span class="font-headline text-2xl font-bold text-sage">4.0 Hours</span>
+<span class="font-mono text-[10px] text-sage">2.5h Completed</span>
+</div>
+</div>
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<span class="font-headline font-bold text-sm text-desert-dark">Today's Lecture Schedule</span>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex items-start gap-3">
+<span class="font-mono text-xs font-bold text-primary bg-primary-light px-2 py-1 rounded border border-primary/20 shrink-0">10:00</span>
+<div class="flex-1 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-bold text-desert-dark">CS 641: Distributed Systems</span>
+<span class="px-1.5 py-0.5 rounded bg-sage-light text-sage font-mono text-[9px] font-bold">Attended</span>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">Hall 3B • Raft Consensus &amp; Compaction</span>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex items-start gap-3">
+<span class="font-mono text-xs font-bold text-desert-dark bg-card-surface-low px-2 py-1 rounded border border-desert-border shrink-0">14:00</span>
+<div class="flex-1 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-bold text-desert-dark">MATH 480: Linear Algebra</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-light text-primary font-mono text-[9px] font-bold">Up Next</span>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">Lecture Hall A • SVD &amp; Principal Components</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ACADEMIC: WEEKLY SUBVIEW -->
+<div class="acad-subpanel flex flex-col gap-3.5 hidden" id="acad-subview-weekly">
+<span class="font-mono text-xs text-desert-muted px-1">Enrolled Semester Courses (Week 9/16)</span>
+<!-- Course 1 -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-primary px-2 py-0.5 rounded">CS 641</span>
+<span class="font-mono text-xs text-sage font-bold">4.0 Credits</span>
+</div>
+<h4 class="font-headline font-bold text-sm text-desert-dark">Distributed Systems</h4>
+<span class="font-mono text-[10px] text-desert-muted">MWF 10:00 • Prof. Vance • Invariants &amp; Leases</span>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[68%]"></div>
+</div>
+<span class="font-mono text-[10px] text-primary">Pset #3 Due Friday 23:59</span>
+</div>
+<!-- Course 2 -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-sage px-2 py-0.5 rounded">CS 782</span>
+<span class="font-mono text-xs text-sage font-bold">4.0 Credits</span>
+</div>
+<h4 class="font-headline font-bold text-sm text-desert-dark">Machine Learning &amp; Autonomous Systems</h4>
+<span class="font-mono text-[10px] text-desert-muted">T/Th 13:30 • Dr. Rostova • Vision Heads &amp; Edge TPU</span>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-sage w-[72%]"></div>
+</div>
+<span class="font-mono text-[10px] text-sage">Recitation: Wednesday 15:00</span>
+</div>
+<!-- Course 3 -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-terracotta px-2 py-0.5 rounded">CS 590</span>
+<span class="font-mono text-xs text-sage font-bold">3.0 Credits</span>
+</div>
+<h4 class="font-headline font-bold text-sm text-desert-dark">Advanced Algorithms</h4>
+<span class="font-mono text-[10px] text-desert-muted">MWF 13:00 • Prof. Bhatt • Min-Cut Max-Flow</span>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-terracotta w-[65%]"></div>
+</div>
+<span class="font-mono text-[10px] text-terracotta">Problem Set #5: Open</span>
+</div>
+<!-- Course 4 -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-[#785837] px-2 py-0.5 rounded">MATH 480</span>
+<span class="font-mono text-xs text-sage font-bold">3.0 Credits</span>
+</div>
+<h4 class="font-headline font-bold text-sm text-desert-dark">Linear Algebra &amp; Matrix Computing</h4>
+<span class="font-mono text-[10px] text-desert-muted">T/Th 10:00 • Dr. Alvarez • SVD &amp; Pseudoinverses</span>
+<div class="h-1.5 w-full bg-card-surface-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[70%]"></div>
+</div>
+<span class="font-mono text-[10px] text-desert-dark">Homework #4: Due Today</span>
+</div>
+</div>
+<!-- ACADEMIC: MONTHLY SUBVIEW -->
+<div class="acad-subpanel flex flex-col gap-3.5 hidden" id="acad-subview-monthly">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<span class="font-headline font-bold text-sm text-desert-dark">Examination &amp; Midterm Horizon</span>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-primary px-2 py-0.5 rounded">CS 641</span>
+<span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-mono text-[9px] font-bold">In 3 Days</span>
+</div>
+<h5 class="font-body font-bold text-xs text-desert-dark">Distributed Systems Midterm Exam</h5>
+<span class="font-mono text-[10px] text-desert-muted">Monday, Oct 27 • 10:00 - 12:00 • Hall 3B</span>
+</div>
+<div class="p-3 rounded-xl bg-card-surface-alt/70 border border-desert-border flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-white bg-[#785837] px-2 py-0.5 rounded">MATH 480</span>
+<span class="px-2 py-0.5 rounded bg-sage-light text-sage font-mono text-[9px] font-bold">In 12 Days</span>
+</div>
+<h5 class="font-body font-bold text-xs text-desert-dark">Linear Algebra Midterm II (SVD)</h5>
+<span class="font-mono text-[10px] text-desert-muted">Thursday, Nov 06 • 14:00 - 16:00 • Lecture Hall A</span>
+</div>
+</div>
+</div>
+<!-- ACADEMIC: CUSTOM / AUDIT SUBVIEW -->
+<div class="acad-subpanel flex flex-col gap-3.5 hidden" id="acad-subview-custom">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline font-bold text-sm text-desert-dark">Degree Audit Status</span>
+<span class="font-mono text-[11px] text-primary font-bold">87.5% Completed</span>
+</div>
+<span class="font-mono text-xs text-desert-muted">112 of 128 Credits Fulfilled • Senior Standing</span>
+<div class="h-2 w-full bg-card-surface-low rounded-full overflow-hidden mt-1">
+<div class="h-full bg-sage w-[87.5%]"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border flex items-center justify-between">
+<div>
+<span class="font-mono text-[10px] text-desert-muted">Core CS Requirements</span>
+<h5 class="font-body font-bold text-xs text-desert-dark">48 / 48 Credits</h5>
+</div>
+<span class="material-symbols-outlined text-sage text-[20px]">check_circle</span>
+</div>
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border flex items-center justify-between">
+<div>
+<span class="font-mono text-[10px] text-desert-muted">Systems Track Electives</span>
+<h5 class="font-body font-bold text-xs text-desert-dark">16 / 20 Credits</h5>
+</div>
+<span class="font-mono text-xs text-primary font-bold">1 Left</span>
+</div>
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border flex items-center justify-between">
+<div>
+<span class="font-mono text-[10px] text-desert-muted">Mathematics &amp; Science</span>
+<h5 class="font-body font-bold text-xs text-desert-dark">32 / 32 Credits</h5>
+</div>
+<span class="material-symbols-outlined text-sage text-[20px]">check_circle</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==============================================
+         VIEW 3: DASHBOARD
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-3.5 hidden" id="page-dashboard">
+<!-- 4 Stat Cards in 2x2 grid -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Daily Tasks -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col justify-between cursor-pointer" onclick="navigateTo('task')">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Daily Tasks</span>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-headline text-2xl font-bold text-desert-dark">3</span>
+<span class="font-mono text-xs text-desert-muted">/4</span>
+</div>
+<span class="font-mono text-[10px] text-primary font-bold">75% Complete</span>
+</div>
+<!-- DSA Master -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col justify-between cursor-pointer" onclick="navigateTo('dsa')">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">DSA Solved</span>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-headline text-2xl font-bold text-desert-dark">142</span>
+<span class="font-mono text-[10px] text-sage font-bold">+3 today</span>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">Rating: 2,148</span>
+</div>
+<!-- Journal Streak -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col justify-between cursor-pointer" onclick="navigateTo('journal')">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Field Journal</span>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-headline text-2xl font-bold text-desert-dark">18</span>
+<span class="font-mono text-xs text-primary font-bold">Days</span>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">SOL-1049 Active</span>
+</div>
+<!-- Academic GPA -->
+<div class="bg-card-surface p-3.5 rounded-xl border border-desert-border shadow-xs flex flex-col justify-between cursor-pointer" onclick="navigateTo('academic')">
+<span class="font-mono text-[10px] text-desert-muted uppercase font-bold">Academic GPA</span>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-headline text-2xl font-bold text-desert-dark">3.94</span>
+<span class="font-mono text-[10px] text-sage font-bold">Honors</span>
+</div>
+<span class="font-mono text-[10px] text-desert-muted">Midterm in 3d</span>
+</div>
+</div>
+<!-- Quick Action Jump To Tasks -->
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[24px]">flag</span>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-xs text-desert-dark">Next Tactical Objective</span>
+<span class="font-mono text-[10px] text-desert-muted">CS 641 Midterm practice questions</span>
+</div>
+</div>
+<button class="px-3 py-1.5 bg-primary text-white rounded-lg font-mono text-xs font-semibold shadow-xs" onclick="navigateTo('task')">
+          Open
+        </button>
+</div>
+</section>
+<!-- ==============================================
+         VIEW 4: DSA PRACTICE TRACKER
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-3.5" id="page-dsa">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-headline font-bold text-base text-desert-dark">Algorithmic Velocity</h3>
+<span class="font-mono text-xs text-desert-muted">142 Problems Solved</span>
+</div>
+<span class="px-2.5 py-1 rounded bg-primary-light text-primary font-mono text-xs font-bold border border-primary/20">Top 2.1%</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-center pt-1 font-mono">
+<div class="p-2 rounded-lg bg-card-surface-alt">
+<span class="text-xs text-sage font-bold">68</span>
+<span class="block text-[9px] text-desert-muted">Easy</span>
+</div>
+<div class="p-2 rounded-lg bg-card-surface-alt">
+<span class="text-xs text-primary font-bold">62</span>
+<span class="block text-[9px] text-desert-muted">Medium</span>
+</div>
+<div class="p-2 rounded-lg bg-card-surface-alt">
+<span class="text-xs text-red-700 font-bold">12</span>
+<span class="block text-[9px] text-desert-muted">Hard</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-body font-bold text-xs text-desert-dark">#210 Course Schedule II (Topo Sort)</span>
+<span class="font-mono text-[10px] text-desert-muted">Kahn's algorithm, in-degree BFS</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-sage-light text-sage font-mono text-[10px] font-bold">Solved</span>
+</div>
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-body font-bold text-xs text-desert-dark">#42 Trapping Rain Water</span>
+<span class="font-mono text-[10px] text-desert-muted">Two-pointer approach O(1) space</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-sage-light text-sage font-mono text-[10px] font-bold">Solved</span>
+</div>
+<div class="bg-card-surface p-3 rounded-xl border border-desert-border shadow-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-body font-bold text-xs text-desert-dark">#208 Implement Trie</span>
+<span class="font-mono text-[10px] text-desert-muted">Prefix search and child arrays</span>
+</div>
+<button class="px-2.5 py-1 rounded bg-primary text-white font-mono text-[10px] font-bold shadow-xs" onclick="showToast('Opened problem in editor', 'urgent')">Solve</button>
+</div>
+</div>
+</section>
+<!-- ==============================================
+         VIEW 5: JOURNAL
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-3.5 hidden" id="page-journal">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="font-headline font-bold text-base text-desert-dark">Field Log SOL-1049</h3>
+<span class="font-mono text-[10px] text-primary font-bold bg-primary-light px-2 py-0.5 rounded border border-primary/20">Oct 24</span>
+</div>
+<input class="w-full bg-white text-desert-dark font-headline font-bold text-xs p-2.5 rounded-lg border border-desert-border focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Sector 7 Acoustic Telemetry &amp; Anvil Trajectory">
+<textarea class="w-full bg-white text-desert-dark font-mono text-xs p-2.5 rounded-lg border border-desert-border focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed" rows="5">Target observed traveling eastward on Highway 66 at 65 knots. 
+
+Countermeasure:
+Reinforce base pedestal with ACME titanium anchors.</textarea>
+<button class="w-full py-2.5 bg-primary hover:bg-primary-hover active:scale-98 text-white font-mono text-xs font-semibold rounded-lg flex items-center justify-center gap-1 shadow-xs transition-transform" onclick="showToast('Field Log SOL-1049 encrypted and saved ✓', 'success')">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span class="">Save Log Entry</span>
+</button>
+</div>
+</section>
+<!-- ==============================================
+         VIEW 6: GENERAL NOTES
+         ============================================== -->
+<section class="workspace-view flex flex-col gap-3.5 hidden" id="page-general-notes">
+<div class="bg-card-surface p-4 rounded-2xl border border-desert-border shadow-xs flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="font-headline font-bold text-base text-desert-dark">Scratchpad Vault</h3>
+<button class="text-primary font-mono text-xs font-bold" onclick="showToast('Created new note draft', 'success')">+ New Note</button>
+</div>
+<div class="bg-[#1e1713] text-[#f7eee4] rounded-xl p-3 font-mono text-[11px] leading-relaxed flex flex-col gap-1">
+<span class="text-sage">// ACME INDUSTRIAL EQUIPMENT - NOTE</span>
+<span class="text-primary-light">const CALIBRATION_G = 9.80665;</span>
+<span class="text-[#E1D2C5]">function counterweightDrop(targetVelocity) {</span>
+<span class="text-[#E1D2C5] pl-3">return (0.5 * 450 * Math.pow(targetVelocity, 2)) / 9.81;</span>
+<span class="text-[#E1D2C5]">}</span>
+</div>
+</div>
+</section>
+</main>
+<!-- ================= BOTTOM NAVIGATION BAR ================= -->
+<nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-40 bg-sand-bg/95 backdrop-blur-md border-t border-desert-border px-2 pt-2 pb-safe flex items-center justify-around select-none shadow-lg">
+<!-- Tasks (Primary default) -->
+<button class="bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-desert-muted hover:text-desert-dark transition-all" data-nav="task" onclick="navigateTo('task')" style="animation-delay: 318ms;">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+<span class="font-mono text-[10px] font-bold">Tasks</span>
+</button>
+<!-- Academic -->
+<button class="bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-desert-muted hover:text-desert-dark transition-all" data-nav="academic" onclick="navigateTo('academic')" style="animation-delay: 318ms;">
+<span class="material-symbols-outlined text-[22px]">school</span>
+<span class="font-mono text-[10px] font-medium">Academic</span>
+</button>
+<!-- Dashboard -->
+<button class="bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-desert-muted hover:text-desert-dark transition-all" data-nav="dashboard" onclick="navigateTo('dashboard')" style="animation-delay: 318ms;">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="font-mono text-[10px] font-medium">Dashboard</span>
+</button>
+<!-- DSA -->
+<button class="bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-primary transition-all font-bold" data-nav="dsa" onclick="navigateTo('dsa')" style="animation-delay: 318ms;">
+<span class="material-symbols-outlined text-[22px]">terminal</span>
+<span class="font-mono text-[10px] font-medium">DSA</span>
+</button>
+<!-- Journal -->
+<button class="bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-desert-muted hover:text-desert-dark transition-all" data-nav="journal" onclick="navigateTo('journal')" style="animation-delay: 318ms;">
+<span class="material-symbols-outlined text-[22px]">edit_calendar</span>
+<span class="font-mono text-[10px] font-medium">Journal</span>
+</button>
+</nav>
+<!-- ================= TOAST NOTIFICATION CONTAINER ================= -->
+<div class="fixed bottom-20 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm mx-auto" id="toastStack"></div>
+<!-- ================= CLIENT JAVASCRIPT ================= -->
+<script>
+    // View Titles dictionary
+    const viewTitles = {
+      'task': 'Tasks',
+      'academic': 'Academic',
+      'dashboard': 'Dashboard',
+      'dsa': 'DSA Arena',
+      'journal': 'Field Journal',
+      'general-notes': 'Notes'
+    };
+
+    // Navigation Switcher
+    function navigateTo(viewKey) {
+      // 1. Toggle page sections
+      document.querySelectorAll('.workspace-view').forEach(v => v.classList.add('hidden'));
+      const activePage = document.getElementById('page-' + viewKey);
+      if (activePage) activePage.classList.remove('hidden');
+
+      // 2. Update Header Badge
+      const badge = document.getElementById('mobileActiveBadge');
+      if (badge) badge.textContent = viewTitles[viewKey] || viewKey;
+
+      // 3. Update top tabs
+      document.querySelectorAll('.top-view-tab').forEach(tab => {
+        if (tab.getAttribute('data-nav-tab') === viewKey) {
+          tab.className = 'top-view-tab shrink-0 px-3 py-1.5 rounded-full font-mono text-xs font-semibold flex items-center gap-1 transition-all bg-primary text-white shadow-xs';
+        } else {
+          tab.className = 'top-view-tab shrink-0 px-3 py-1.5 rounded-full font-mono text-xs font-medium text-desert-dark bg-card-surface border border-desert-border flex items-center gap-1 transition-all hover:bg-card-surface-alt';
+        }
+      });
+
+      // 4. Update bottom nav
+      document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-nav') === viewKey) {
+          btn.className = 'bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-primary transition-all font-bold';
+        } else {
+          btn.className = 'bottom-nav-btn flex-1 py-1.5 flex flex-col items-center gap-0.5 text-desert-muted hover:text-desert-dark transition-all';
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Switch Task Sub-categories
+    function switchTaskCategory(cat) {
+      // Buttons
+      ['daily', 'weekly', 'monthly', 'custom'].forEach(c => {
+        const btn = document.getElementById(`btn-task-${c}`);
+        if (c === cat) {
+          btn.className = 'task-pill py-2 px-1 text-center rounded-lg bg-primary text-white font-mono text-xs font-semibold shadow-xs flex items-center justify-center gap-1 transition-all';
+        } else {
+          btn.className = 'task-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center gap-1 transition-all hover:bg-card-surface';
+        }
+      });
+
+      // Panels
+      document.querySelectorAll('.task-subpanel').forEach(p => p.classList.add('hidden'));
+      const activeSub = document.getElementById(`task-subview-${cat}`);
+      if (activeSub) activeSub.classList.remove('hidden');
+
+      showToast(`Switched to Task ${cat.toUpperCase()} view`, 'info');
+    }
+
+    // Switch Academic Sub-categories
+    function switchAcadCategory(cat) {
+      ['daily', 'weekly', 'monthly', 'custom'].forEach(c => {
+        const btn = document.getElementById(`btn-acad-${c}`);
+        if (c === cat) {
+          btn.className = 'acad-pill py-2 px-1 text-center rounded-lg bg-primary text-white font-mono text-xs font-semibold shadow-xs flex items-center justify-center transition-all';
+        } else {
+          btn.className = 'acad-pill py-2 px-1 text-center rounded-lg text-desert-dark font-mono text-xs font-medium flex items-center justify-center transition-all hover:bg-card-surface';
+        }
+      });
+
+      document.querySelectorAll('.acad-subpanel').forEach(p => p.classList.add('hidden'));
+      const activeSub = document.getElementById(`acad-subview-${cat}`);
+      if (activeSub) activeSub.classList.remove('hidden');
+
+      showToast(`Switched to Academic ${cat.toUpperCase()} view`, 'info');
+    }
+
+    // Filter Task Custom items
+    function filterTaskCustomTag(btn, tag) {
+      document.querySelectorAll('.task-filter-tag').forEach(b => {
+        b.className = 'task-filter-tag px-2.5 py-1 rounded-lg bg-card-surface-alt text-desert-dark font-mono text-xs';
+      });
+      btn.className = 'task-filter-tag px-2.5 py-1 rounded-lg bg-primary text-white font-mono text-xs font-bold';
+
+      document.querySelectorAll('.task-custom-item').forEach(item => {
+        if (tag === 'all' || item.getAttribute('data-tag') === tag) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    // Toggle Task completion & recount
+    function toggleTaskDone(cb) {
+      const row = cb.closest('.task-row');
+      const title = row?.querySelector('.task-title');
+      if (cb.checked) {
+        title?.classList.add('line-through', 'opacity-70');
+        showToast('Task marked complete ✓', 'success');
+      } else {
+        title?.classList.remove('line-through', 'opacity-70');
+        showToast('Task marked active', 'info');
+      }
+      updateTaskSummary();
+    }
+
+    function updateTaskSummary() {
+      const container = document.getElementById('dailyTaskListContainer');
+      if (!container) return;
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      const total = checkboxes.length;
+      let checked = 0;
+      checkboxes.forEach(c => { if (c.checked) checked++; });
+
+      const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+      
+      const ratioEl = document.getElementById('taskSummaryRatio');
+      const pctEl = document.getElementById('taskSummaryPercent');
+      const circleText = document.getElementById('taskCircleText');
+      const circle = document.getElementById('taskProgressCircle');
+      const badge = document.getElementById('taskDailyBadgeCount');
+
+      if (ratioEl) ratioEl.textContent = `${checked}/${total}`;
+      if (pctEl) pctEl.textContent = `${pct}% Done`;
+      if (circleText) circleText.textContent = `${pct}%`;
+      if (badge) badge.textContent = `${total}`;
+
+      if (circle) {
+        const offset = 100.53 - (100.53 * (pct / 100));
+        circle.style.strokeDashoffset = offset;
+      }
+
+      // Check urgent tasks count
+      const urgentLeft = container.querySelectorAll('.task-row:not(:has(input:checked)) .text-red-700, .task-row:not(:has(input:checked)) .border-primary').length;
+      const urgentEl = document.getElementById('urgentTaskCount');
+      if (urgentEl) urgentEl.textContent = `${urgentLeft} Task${urgentLeft === 1 ? '' : 's'}`;
+    }
+
+    // Add Direct Task into timeline
+    function addTaskDirect(view) {
+      const input = document.getElementById('taskInputDaily');
+      if (!input || !input.value.trim()) return;
+      const val = input.value.trim();
+      const container = document.getElementById('dailyTaskListContainer');
+
+      const item = document.createElement('div');
+      item.className = 'task-row flex items-start gap-3 pl-1 relative group';
+      item.innerHTML = `
+        <div class="mt-0.5 w-6 h-6 rounded-full bg-card-surface border-2 border-primary text-primary flex items-center justify-center shrink-0 z-10">
+          <input type="checkbox" onchange="toggleTaskDone(this)" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer">
+        </div>
+        <div class="flex-1 bg-card-surface-alt/70 p-3 rounded-xl border border-desert-border/80 flex flex-col gap-1">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-mono text-[10px] font-bold text-primary">Now</span>
+            <span class="px-1.5 py-0.5 rounded-full bg-primary-light text-primary font-mono text-[9px] font-bold border border-primary/20">Tactical</span>
+          </div>
+          <span class="task-title font-body font-semibold text-desert-dark text-xs">${val}</span>
+          <span class="font-mono text-[10px] text-desert-muted">Logged from Mobile Queue</span>
+        </div>
+      `;
+      container.prepend(item);
+      input.value = '';
+      updateTaskSummary();
+      showToast(`Added: ${val}`, 'success');
+    }
+
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+      const stack = document.getElementById('toastStack');
+      if (!stack) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto transform translate-y-3 opacity-0 transition-all duration-300 flex items-center gap-2 px-3.5 py-2.5 rounded-xl shadow-lg border text-xs font-mono font-semibold';
+      
+      if (type === 'success') {
+        toast.className += ' bg-card-surface text-desert-dark border-sage/60';
+        toast.innerHTML = `<span class="material-symbols-outlined text-sage text-[18px]">check_circle</span><span>${message}</span>`;
+      } else if (type === 'urgent') {
+        toast.className += ' bg-card-surface text-desert-dark border-primary/50';
+        toast.innerHTML = `<span class="material-symbols-outlined text-primary text-[18px]">priority_high</span><span>${message}</span>`;
+      } else {
+        toast.className += ' bg-sidebar-bg text-[#FBF5EC] border-[#3E3128]';
+        toast.innerHTML = `<span class="material-symbols-outlined text-desert-border text-[18px]">info</span><span>${message}</span>`;
+      }
+
+      stack.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3');
+        setTimeout(() => toast.remove(), 250);
+      }, 2300);
+    }
+  </script>
+
+
+</body></html>

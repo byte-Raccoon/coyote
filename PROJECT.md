@@ -23,17 +23,30 @@
     - General Notes
 
 - android phone
-  - it will be as a application
-  - it will contain features 
+  - it will be as an application (OnePlus / Android, React Native Expo)
+  - styled with Coyote Desert Workspace design tokens
+  - it will contain features:
     - Dashboard
-    - Planner 
-      - Weekly 
-      - monthly
-      - yearly
-    - DSA
-      - DSA target
-      - academic target
-    - VAULT
-      - journal 
-      - project ideas
-      - general notes
+      - 2x2 Tactical Command Metrics (Daily Tasks, DSA Velocity, Journal Streak, Academic Status)
+      - Next Tactical Objective quick jump
+    - Task Command
+      - Daily (Timeline schedule, execution progress ring, urgent priority alerts)
+      - Weekly (Sprint horizon, track milestones & deadlines)
+      - Monthly (Quotas & horizon calendar)
+      - Custom (Domain tag filters: #Systems, #Algorithms, #Academic)
+    - Academic Portal
+      - Daily (Lecture schedule, study goals & attendance)
+      - Weekly (Course syllabi, enrolled tracks, credit hours, Psets)
+      - Monthly (Midterm & examination countdowns)
+      - Audit (Degree audit & requirement credits)
+    - DSA Arena
+      - Algorithmic Velocity (Total problems solved & percentile)
+      - Difficulty breakdown (Easy, Medium, Hard metrics)
+      - Problem Tracker (Curated problem list & solve status)
+    - Field Journal
+      - Tactical SOL logs (Title, body reflections, countermeasures)
+    - Notes & Vault
+      - General Notes, scratchpad & code snippets
+      - Project Ideas
+    - Sync Engine
+      - Local Wi-Fi & Hotspot sync with MacBook Air backend on port 3335
