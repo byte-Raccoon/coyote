@@ -10,10 +10,10 @@
     "web": "npx expo start --web"
   },
   "dependencies": {
-    "expo": "~50.0.14",
-    "expo-status-bar": "~1.11.1",
-    "react": "18.2.0",
-    "react-native": "0.73.6"
+    "expo": "~57.0.26",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-native": "0.86.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
