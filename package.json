@@ -7,6 +7,7 @@
     "dev:web": "npm run dev --prefix web",
     "dev:backend": "backend/.venv/bin/python3 backend/run.py",
     "dev:mobile": "npm run start --prefix mobile",
+    "dev:mobile:tunnel": "npm run start:tunnel --prefix mobile",
     "build:web": "npm run build --prefix web"
   }
 }
