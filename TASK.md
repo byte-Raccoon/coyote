@@ -29,16 +29,15 @@ Establish the Coyote project foundation from `PROJECT.md`.
 - [ ] Project Ideas
 - [ ] General Notes
 
-## Android features (Pending real implementation)
-- [ ] Dashboard
-- [ ] Weekly Planner
-- [ ] Monthly Planner
-- [ ] Yearly Planner
-- [ ] DSA Target
-- [ ] Academic Target
-- [ ] Vault / Journal
-- [ ] Vault / Project Ideas
-- [ ] Vault / General Notes
+## Android features
+- [x] Horizontal Swipe Navigation between sections
+- [x] Task Command: Daily (Auto-locked to current date, full CRUD, completion toggle)
+- [x] Task Command: Weekly, Yearly, Custom (Date selection, deadlines, full CRUD)
+- [x] Academic Portal: Courses, Exams, Lectures, Audit with icons & full CRUD
+- [x] DSA Arena: Feature 1 (Weekly Target & progress), Feature 2 (Today's counter & logger), Feature 3 (Monthly Grind heatmap)
+- [x] Project Ideas Vault: Replaces Journal with full CRUD, domain tags (#Systems, #AI, etc.), and status
+- [x] Dynamic Dashboard: Metrics calculated live from real data (zero dummy data)
+- [x] Persistent Local Storage: AsyncStorage integration so data persists offline across app restarts
 
 ## Sync
 - [x] Decide source of truth (Mac SQLite as canonical hub, client as offline-first replica).

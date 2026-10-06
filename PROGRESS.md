@@ -23,17 +23,19 @@
 - [x] Analyzed `DESIGN/coyote_mobile` and updated `PROJECT.md` with complete Android feature scope.
 - [x] Implemented React Native mobile application (`mobile/App.js`) matching `DESIGN/coyote_mobile` specification with Task Command, Academic Portal, Dashboard, DSA Arena, Field Journal, and Sync Engine.
 - [x] Verified Vite frontend production build and FastAPI backend database/sync models.
-
-## Current state note
-> **Notice:** Mobile version and web version are currently dummies / prototypes, not a real working app and site; all features still have to be fully implemented.
+- [x] Mobile Phase 1 Complete: Installed `@react-native-async-storage/async-storage`, configured `tokens.js`, and implemented persistent local storage layer (`storage.js`).
+- [x] Mobile Phase 2 Complete: Swipe-enabled horizontal navigation linking bottom nav and header badges seamlessly.
+- [x] Mobile Phase 3 Complete: Task Command (Daily auto-date, custom date selection, priority tags, full CRUD) and Project Ideas Vault (replacing Journal with domain tags, status, full CRUD).
+- [x] Mobile Phase 4 Complete: DSA Arena redesign (Weekly Target, Today's counter & logger, The Grind monthly heatmap); Academic Portal with clean icon badges and full CRUD for courses, exams, lectures, and degree audit.
+- [x] Mobile Phase 5 Complete: Removed all dummy/hardcoded data across all sections; dynamic Dashboard deriving metrics in real time; persistent offline storage verified.
 
 ## In progress
-- Implementing real feature logic across all domains (Tasks, Planner, Academic, DSA, Vault).
-- Testing physical sync over local Wi-Fi / Hotspot between Mac and OnePlus device.
+- Web macOS implementation: Connecting full real features on localhost:3333 to match mobile feature parity.
+- Physical sync verification between MacBook Air and OnePlus phone over local Wi-Fi / Hotspot.
 - Agent engineering learning track (Skills, Hooks, MCP, Subagents).
 
 ## Next step
-- Implement real feature modules beyond dummy/prototype stage.
+- Bring macOS web client to full feature parity with mobile (Weekly/Yearly tasks, Academic manager, DSA targets, Ideas vault).
 
 ## State
 ```text
@@ -41,9 +43,9 @@ Product definition      ✓
 Architecture            ✓
 Technology stack        ✓
 Database/data model     ✓
-Sync implementation     In progress (Basic endpoints ready)
-macOS implementation    In progress (UI prototype; real features pending)
-Android implementation   In progress (UI prototype; real features pending)
+Sync implementation     In progress (Basic endpoints & client ready)
+macOS implementation    In progress (UI prototype; backend connected)
+Android implementation   ✓ (Full features, persistent storage, swipe navigation)
 Agent infrastructure    Not started
 ```
 

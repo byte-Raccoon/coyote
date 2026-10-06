@@ -25,28 +25,26 @@
 - android phone
   - it will be as an application (OnePlus / Android, React Native Expo)
   - styled with Coyote Desert Workspace design tokens
+  - swipe-enabled horizontal paging between sections
   - it will contain features:
     - Dashboard
-      - 2x2 Tactical Command Metrics (Daily Tasks, DSA Velocity, Journal Streak, Academic Status)
+      - 2x2 Tactical Command Metrics (Daily Tasks, DSA Velocity, Ideas Logged, Academic Status)
       - Next Tactical Objective quick jump
     - Task Command
-      - Daily (Timeline schedule, execution progress ring, urgent priority alerts)
-      - Weekly (Sprint horizon, track milestones & deadlines)
-      - Monthly (Quotas & horizon calendar)
-      - Custom (Domain tag filters: #Systems, #Algorithms, #Academic)
+      - Daily (Auto-locked to current date, execution completion metrics, priority tags, full CRUD)
+      - Weekly, Yearly, Custom (Custom date selection, deadlines, domain filters, full CRUD)
     - Academic Portal
-      - Daily (Lecture schedule, study goals & attendance)
-      - Weekly (Course syllabi, enrolled tracks, credit hours, Psets)
-      - Monthly (Midterm & examination countdowns)
-      - Audit (Degree audit & requirement credits)
+      - Enrolled courses with credits and syllabus (Add, Edit, Delete)
+      - Milestone Exams and Midterms with horizon dates (Add, Edit, Delete)
+      - Lecture schedule blocks (Add, Edit, Delete)
+      - Degree audit credit tracker
     - DSA Arena
-      - Algorithmic Velocity (Total problems solved & percentile)
-      - Difficulty breakdown (Easy, Medium, Hard metrics)
-      - Problem Tracker (Curated problem list & solve status)
-    - Field Journal
-      - Tactical SOL logs (Title, body reflections, countermeasures)
-    - Notes & Vault
-      - General Notes, scratchpad & code snippets
-      - Project Ideas
+      - Feature 1: Weekly Target (Adjustable goal, live weekly progress bar)
+      - Feature 2: Questions Done Today (Quick +1/-1 counter and problem detail logger)
+      - Feature 3: The Grind (Monthly activity calendar heatmap with intensity levels)
+    - Project Ideas Vault (Replaces Journal)
+      - Architectural concepts, tech stacks, roadmap notes
+      - Domain tags (#Systems, #AI, #Mobile, #Web)
+      - Status tags (Concept, Prototyping, Shipped) with full CRUD
     - Sync Engine
       - Local Wi-Fi & Hotspot sync with MacBook Air backend on port 3335
