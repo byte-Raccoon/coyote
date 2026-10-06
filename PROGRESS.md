@@ -24,12 +24,16 @@
 - [x] Implemented React Native mobile application (`mobile/App.js`) matching `DESIGN/coyote_mobile` specification with Task Command, Academic Portal, Dashboard, DSA Arena, Field Journal, and Sync Engine.
 - [x] Verified Vite frontend production build and FastAPI backend database/sync models.
 
+## Current state note
+> **Notice:** Mobile version and web version are currently dummies / prototypes, not a real working app and site; all features still have to be fully implemented.
+
 ## In progress
+- Implementing real feature logic across all domains (Tasks, Planner, Academic, DSA, Vault).
 - Testing physical sync over local Wi-Fi / Hotspot between Mac and OnePlus device.
 - Agent engineering learning track (Skills, Hooks, MCP, Subagents).
 
 ## Next step
-- Launch both services locally and verify multiplatform workflow.
+- Implement real feature modules beyond dummy/prototype stage.
 
 ## State
 ```text
@@ -37,9 +41,9 @@ Product definition      ✓
 Architecture            ✓
 Technology stack        ✓
 Database/data model     ✓
-Sync implementation     ✓ (REST sync endpoints & client ready)
-macOS implementation    ✓ (Port 3333, live interactive CRUD)
-Android implementation   ✓ (React Native foundation ready)
+Sync implementation     In progress (Basic endpoints ready)
+macOS implementation    In progress (UI prototype; real features pending)
+Android implementation   In progress (UI prototype; real features pending)
 Agent infrastructure    Not started
 ```
 

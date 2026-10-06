@@ -179,6 +179,16 @@ export default function App() {
               </View>
             </View>
 
+            {/* Dummy Disclaimer Banner */}
+            <View style={styles.noticeBanner}>
+              <View style={styles.noticeTag}>
+                <Text style={styles.noticeTagText}>NOTICE</Text>
+              </View>
+              <Text style={styles.noticeText}>
+                Mobile version and web version are just dummies, not a real working app and site, we still have to implement all the feature.
+              </Text>
+            </View>
+
             {/* 1.1 DAILY SUBVIEW */}
             {taskCategory === 'daily' && (
               <View style={styles.subviewContainer}>
@@ -805,6 +815,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DEC8A5',
     gap: 12,
+  },
+  noticeBanner: {
+    backgroundColor: 'rgba(217, 83, 30, 0.08)',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(217, 83, 30, 0.25)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  noticeTag: {
+    backgroundColor: '#D9531E',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  noticeTagText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: 'bold',
+  },
+  noticeText: {
+    flex: 1,
+    color: '#2A1D15',
+    fontSize: 10,
+    fontWeight: '600',
+    lineHeight: 14,
   },
   bannerHeader: {
     flexDirection: 'row',

@@ -423,6 +423,12 @@ export default function App() {
           {/* TASKS VIEW */}
           {activeTab === 'tasks' && (
             <div className="space-y-6">
+              {/* Dummy Disclaimer Banner */}
+              <div className="bg-amber-500/10 border border-amber-600/30 rounded-xl p-3.5 flex items-center gap-3 text-xs text-amber-900 font-medium">
+                <span className="px-2 py-0.5 rounded bg-amber-600/20 text-amber-800 font-mono font-bold text-[10px]">NOTICE</span>
+                <span>Mobile version and web version are just dummies, not a real working app and site, we still have to implement all the feature.</span>
+              </div>
+
               {/* Category selector */}
               <div className="flex gap-2 border-b border-desert-border pb-3">
                 {['daily', 'weekly', 'yearly'].map((cat) => (

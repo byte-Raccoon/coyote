@@ -3,6 +3,8 @@
 ## Current Objective
 Establish the Coyote project foundation from `PROJECT.md`.
 
+> **Notice:** Mobile version and web version are just dummies, not a real working app and site, we still have to implement all the feature.
+
 ## Immediate goals
 - [x] Initialize Git repository, `.gitignore`, and configure remote `https://github.com/byte-Raccoon/coyote.git`.
 - [x] Create project structure (`backend/`, `web/`, `mobile/`).
@@ -10,33 +12,33 @@ Establish the Coyote project foundation from `PROJECT.md`.
 - [x] Define the synchronization architecture (Local Wi-Fi / Hotspot REST API).
 - [x] Define the high-level shared data model.
 - [x] Establish the backend API on `0.0.0.0:3335`.
-- [x] Establish the macOS frontend experience on `localhost:3333`.
-- [x] Establish the Android application foundation (React Native Expo template).
-- [x] Connect web client interactive state directly to backend REST endpoints.
-- [x] Build a minimal end-to-end sync path.
-- [x] Build the first usable Dashboard on both platforms.
+- [x] Establish the macOS frontend UI prototype on `localhost:3333`.
+- [x] Establish the Android application UI prototype (React Native Expo template).
+- [ ] Connect full real feature logic and validation on both platforms.
+- [ ] Build end-to-end production sync path.
+- [ ] Build real usable Dashboard on both platforms.
 
-## macOS features
-- [x] Dashboard
-- [x] Daily Task
-- [x] Weekly Task
-- [x] Yearly Task
-- [x] Journal
-- [x] Academic
-- [x] DSA
-- [x] Project Ideas
-- [x] General Notes
+## macOS features (Pending real implementation)
+- [ ] Dashboard
+- [ ] Daily Task
+- [ ] Weekly Task
+- [ ] Yearly Task
+- [ ] Journal
+- [ ] Academic
+- [ ] DSA
+- [ ] Project Ideas
+- [ ] General Notes
 
-## Android features
-- [x] Dashboard
-- [x] Weekly Planner
-- [x] Monthly Planner
-- [x] Yearly Planner
-- [x] DSA Target
-- [x] Academic Target
-- [x] Vault / Journal
-- [x] Vault / Project Ideas
-- [x] Vault / General Notes
+## Android features (Pending real implementation)
+- [ ] Dashboard
+- [ ] Weekly Planner
+- [ ] Monthly Planner
+- [ ] Yearly Planner
+- [ ] DSA Target
+- [ ] Academic Target
+- [ ] Vault / Journal
+- [ ] Vault / Project Ideas
+- [ ] Vault / General Notes
 
 ## Sync
 - [x] Decide source of truth (Mac SQLite as canonical hub, client as offline-first replica).
