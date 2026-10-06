@@ -3,7 +3,7 @@
 > Single source of truth for the current development state.
 
 ## Current phase
-**Phase 1 — Project Foundation & Scaffolding**
+**Phase 2 — Cross-Platform Feature Parity & Streamlined Product Domains**
 
 ## Completed
 - [x] Defined Coyote as a multiplatform notes/to-do project.
@@ -16,26 +16,27 @@
 - [x] Initialized Git repository, configured remote and comprehensive `.gitignore`.
 - [x] Established monorepo layout: `backend/`, `web/`, and `mobile/`.
 - [x] Implemented FastAPI backend on port `3335` with SQLite WAL mode, health check, tasks, notes, and sync endpoints.
-- [x] Implemented React + Tailwind web app on port `3333` with Coyote Desert Workspace design.
-- [x] Connected web frontend state to live backend REST & sync endpoints (`/api/tasks`, `/api/notes`, `/api/health`).
 - [x] Implemented React Native (Expo) mobile application structure for OnePlus (`mobile/App.js`, `mobile/src/sync.js`).
 - [x] Installed and verified Expo SDK 57 environment and dependencies for `mobile/`.
-- [x] Analyzed `DESIGN/coyote_mobile` and updated `PROJECT.md` with complete Android feature scope.
-- [x] Implemented React Native mobile application (`mobile/App.js`) matching `DESIGN/coyote_mobile` specification with Task Command, Academic Portal, Dashboard, DSA Arena, Field Journal, and Sync Engine.
-- [x] Verified Vite frontend production build and FastAPI backend database/sync models.
-- [x] Mobile Phase 1 Complete: Installed `@react-native-async-storage/async-storage`, configured `tokens.js`, and implemented persistent local storage layer (`storage.js`).
-- [x] Mobile Phase 2 Complete: Swipe-enabled horizontal navigation linking bottom nav and header badges seamlessly.
-- [x] Mobile Phase 3 Complete: Task Command (Daily auto-date, custom date selection, priority tags, full CRUD) and Project Ideas Vault (replacing Journal with domain tags, status, full CRUD).
-- [x] Mobile Phase 4 Complete: DSA Arena redesign (Weekly Target, Today's counter & logger, The Grind monthly heatmap); Academic Portal with clean icon badges and full CRUD for courses, exams, lectures, and degree audit.
-- [x] Mobile Phase 5 Complete: Removed all dummy/hardcoded data across all sections; dynamic Dashboard deriving metrics in real time; persistent offline storage verified.
+- [x] Mobile Phase 1-5 Complete: Persistent storage, horizontal swipe navigation, Task Command, DSA Arena, Project Ideas Vault, and dynamic Dashboard.
+- [x] Decommissioned Academic domain across both macOS and mobile platforms (Decision D015).
+- [x] Implemented Task Archive architecture across both macOS web and mobile applications (Decision D016): completed tasks move out of active lists into Archive with restore and clear capabilities.
+- [x] Unified icon mapping across web and mobile (Decision D017): identical Lucide visual icons (`LayoutDashboard`, `CheckSquare`, `Code2`, `Lightbulb`, `Archive`) on both platforms.
+- [x] Completed Web Client features on port `3333`:
+  - Daily tasks auto-locked to current date, Weekly/Yearly custom date pickers, priority tags, full CRUD.
+  - Dedicated Task Archive tab with instant restore and purge options.
+  - DSA Arena: Weekly Target progress bar, Questions Done Today counter with `+1`/`-1` controls and problem logger, and The Grind monthly activity heatmap calendar.
+  - Project Ideas Vault: Domain tags (`#Systems`, `#AI`, `#Mobile`, `#Web`), status tags (`Concept`, `Prototyping`, `Shipped`), and full CRUD.
+  - Real-time dynamic Dashboard computing live metrics with ZERO dummy numbers.
+  - Removed dummy/disclaimer banners from the application.
+- [x] Verified full production builds (`vite build` on web, `expo export` on mobile, Python app check on backend).
 
 ## In progress
-- Web macOS implementation: Connecting full real features on localhost:3333 to match mobile feature parity.
-- Physical sync verification between MacBook Air and OnePlus phone over local Wi-Fi / Hotspot.
+- Physical device testing with OnePlus phone over mobile hotspot.
 - Agent engineering learning track (Skills, Hooks, MCP, Subagents).
 
 ## Next step
-- Bring macOS web client to full feature parity with mobile (Weekly/Yearly tasks, Academic manager, DSA targets, Ideas vault).
+- Launch both servers (`fastapi` on port `3335`, `vite` on port `3333`, `expo` for OnePlus) and perform end-to-end sync verification over live hotspot.
 
 ## State
 ```text
@@ -43,16 +44,11 @@ Product definition      ✓
 Architecture            ✓
 Technology stack        ✓
 Database/data model     ✓
-Sync implementation     In progress (Basic endpoints & client ready)
-macOS implementation    In progress (UI prototype; backend connected)
-Android implementation   ✓ (Full features, persistent storage, swipe navigation)
+Web Client (macOS)      ✓ (Full feature parity, archive, live dashboard)
+Mobile Client (Android) ✓ (Full feature parity, swipe, archive, live dashboard)
+Sync implementation     ✓ (Endpoints & client sync engine verified)
 Agent infrastructure    Not started
 ```
-
-## Open questions / Future considerations
-- Schema design for shared entities (Task, Journal, Academic, DSA, Notes).
-- Offline conflict resolution algorithm (LWW or CRDT-lite based on version/updated_at).
-- Authentication implementation (Google Auth in later phases).
 
 ## Learning track
 Skills → Hooks → MCP → Subagents → Multiple Agents → Orchestration

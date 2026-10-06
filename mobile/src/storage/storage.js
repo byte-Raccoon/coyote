@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEYS = {
   TASKS: '@coyote_tasks',
-  ACADEMICS: '@coyote_academics',
   DSA: '@coyote_dsa',
   IDEAS: '@coyote_ideas',
   SETTINGS: '@coyote_settings',
@@ -19,16 +18,14 @@ export const getIsoDate = (d = new Date()) => {
 export const storage = {
   async loadAllData() {
     try {
-      const [tasksRaw, acadRaw, dsaRaw, ideasRaw, settingsRaw] = await Promise.all([
+      const [tasksRaw, dsaRaw, ideasRaw, settingsRaw] = await Promise.all([
         AsyncStorage.getItem(KEYS.TASKS),
-        AsyncStorage.getItem(KEYS.ACADEMICS),
         AsyncStorage.getItem(KEYS.DSA),
         AsyncStorage.getItem(KEYS.IDEAS),
         AsyncStorage.getItem(KEYS.SETTINGS),
       ]);
 
       const tasks = tasksRaw ? JSON.parse(tasksRaw) : [];
-      const academics = acadRaw ? JSON.parse(acadRaw) : [];
       const dsa = dsaRaw ? JSON.parse(dsaRaw) : {
         weeklyTarget: 15,
         dailyLogs: {}, // 'YYYY-MM-DD': count
@@ -41,12 +38,11 @@ export const storage = {
         deviceId: 'oneplus-phone'
       };
 
-      return { tasks, academics, dsa, ideas, settings };
+      return { tasks, dsa, ideas, settings };
     } catch (err) {
       console.warn('Failed to load local data from storage:', err);
       return {
         tasks: [],
-        academics: [],
         dsa: { weeklyTarget: 15, dailyLogs: {}, questions: [] },
         ideas: [],
         settings: { hostIp: '192.168.1.100', port: 3335, deviceId: 'oneplus-phone' }
@@ -59,14 +55,6 @@ export const storage = {
       await AsyncStorage.setItem(KEYS.TASKS, JSON.stringify(tasks));
     } catch (err) {
       console.warn('Failed to save tasks:', err);
-    }
-  },
-
-  async saveAcademics(academics) {
-    try {
-      await AsyncStorage.setItem(KEYS.ACADEMICS, JSON.stringify(academics));
-    } catch (err) {
-      console.warn('Failed to save academics:', err);
     }
   },
 

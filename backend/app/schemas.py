@@ -15,9 +15,10 @@ class SyncMetadata(BaseModel):
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-    category: str = "daily" # daily, weekly, yearly
+    category: str = "daily" # daily, weekly, yearly, custom
     is_completed: bool = False
     due_date: Optional[str] = None
+    priority: Optional[str] = "Normal"
 
 class TaskCreate(TaskBase):
     pass
@@ -28,6 +29,7 @@ class TaskUpdate(BaseModel):
     category: Optional[str] = None
     is_completed: Optional[bool] = None
     due_date: Optional[str] = None
+    priority: Optional[str] = None
     is_deleted: Optional[bool] = None
 
 class TaskOut(TaskBase, SyncMetadata):

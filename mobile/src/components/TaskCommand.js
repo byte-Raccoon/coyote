@@ -10,9 +10,10 @@ import {
 } from 'react-native';
 import { colors, spacing, typography } from '../theme/tokens';
 import { generateId, getIsoDate } from '../storage/storage';
+import LucideIcon from './LucideIcon';
 
 export default function TaskCommand({ tasks, onSaveTasks }) {
-  const [category, setCategory] = useState('daily'); // daily, weekly, yearly, custom
+  const [category, setCategory] = useState('daily'); // daily, weekly, yearly, custom, archive
   const [filterTag, setFilterTag] = useState('all');
 
   // Form State
@@ -23,7 +24,7 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
   const [taskDate, setTaskDate] = useState(getIsoDate());
   const [taskPriority, setTaskPriority] = useState('Normal');
 
-  const openAddModal = (cat = category) => {
+  const openAddModal = (cat = category === 'archive' ? 'daily' : category) => {
     setEditingTaskId(null);
     setTaskTitle('');
     setTaskDesc('');
@@ -31,7 +32,6 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
     if (cat === 'daily') {
       setTaskDate(getIsoDate());
     } else if (cat === 'weekly') {
-      // 7 days ahead preset
       const d = new Date();
       d.setDate(d.getDate() + 7);
       setTaskDate(getIsoDate(d));
@@ -56,6 +56,8 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
       return;
     }
 
+    const targetCategory = category === 'archive' ? 'daily' : category;
+
     if (editingTaskId) {
       // Update existing task
       const updated = tasks.map(t => {
@@ -64,7 +66,7 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
             ...t,
             title: taskTitle.trim(),
             description: taskDesc.trim(),
-            date: category === 'daily' ? getIsoDate() : taskDate,
+            date: t.category === 'daily' ? getIsoDate() : taskDate,
             priority: taskPriority,
             version: (t.version || 1) + 1,
             updated_at: new Date().toISOString()
@@ -79,8 +81,8 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
         id: generateId(),
         title: taskTitle.trim(),
         description: taskDesc.trim(),
-        category: category,
-        date: category === 'daily' ? getIsoDate() : taskDate,
+        category: targetCategory,
+        date: targetCategory === 'daily' ? getIsoDate() : taskDate,
         priority: taskPriority,
         is_completed: false,
         version: 1,
@@ -96,7 +98,7 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
   const handleDeleteTask = (id) => {
     Alert.alert(
       'Delete Task',
-      'Are you sure you want to delete this task?',
+      'Are you sure you want to permanently delete this task?',
       [
         { text: 'Cancel', style: 'cancel' },
         { 
@@ -111,12 +113,32 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
     );
   };
 
-  const toggleTaskStatus = (id) => {
+  const handleClearArchive = () => {
+    Alert.alert(
+      'Clear Archive',
+      'Are you sure you want to permanently delete all archived tasks?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear All',
+          style: 'destructive',
+          onPress: () => {
+            const activeOnly = tasks.filter(t => !t.is_completed);
+            onSaveTasks(activeOnly);
+          }
+        }
+      ]
+    );
+  };
+
+  // Complete task -> Moves directly to Archive
+  const handleCompleteTask = (id) => {
     const updated = tasks.map(t => {
       if (t.id === id) {
         return {
           ...t,
-          is_completed: !t.is_completed,
+          is_completed: true,
+          completed_at: new Date().toISOString(),
           version: (t.version || 1) + 1,
           updated_at: new Date().toISOString()
         };
@@ -126,48 +148,88 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
     onSaveTasks(updated);
   };
 
-  // Filter tasks by active category
-  let currentTasks = tasks.filter(t => t.category === category);
-  if (category === 'custom' && filterTag !== 'all') {
-    currentTasks = currentTasks.filter(t => t.priority.toLowerCase() === filterTag.toLowerCase());
+  // Restore task -> Moves from Archive back to active category
+  const handleRestoreTask = (id) => {
+    const updated = tasks.map(t => {
+      if (t.id === id) {
+        return {
+          ...t,
+          is_completed: false,
+          completed_at: null,
+          version: (t.version || 1) + 1,
+          updated_at: new Date().toISOString()
+        };
+      }
+      return t;
+    });
+    onSaveTasks(updated);
+  };
+
+  // Task filtering logic:
+  // Active categories ONLY display active tasks (!is_completed)
+  // Archive tab ONLY displays completed tasks (is_completed)
+  let displayedTasks = [];
+  if (category === 'archive') {
+    displayedTasks = tasks.filter(t => t.is_completed);
+  } else {
+    displayedTasks = tasks.filter(t => t.category === category && !t.is_completed);
+    if (category === 'custom' && filterTag !== 'all') {
+      displayedTasks = displayedTasks.filter(t => (t.priority || '').toLowerCase() === filterTag.toLowerCase());
+    }
   }
 
-  const completedCount = currentTasks.filter(t => t.is_completed).length;
-  const totalCount = currentTasks.length;
-  const percentDone = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-  const urgentCount = currentTasks.filter(t => t.priority === 'Urgent' && !t.is_completed).length;
+  // Live Metrics
+  const activeTasksCount = tasks.filter(t => !t.is_completed).length;
+  const archivedTasksCount = tasks.filter(t => t.is_completed).length;
+  const totalTasksCount = tasks.length;
+  const completionRate = totalTasksCount > 0 ? Math.round((archivedTasksCount / totalTasksCount) * 100) : 0;
+  const urgentPending = tasks.filter(t => !t.is_completed && t.priority === 'Urgent').length;
 
   return (
     <View style={styles.container}>
-      {/* Category 4-Pill Selector */}
+      {/* Category Pill Selector (Daily, Weekly, Yearly, Custom, Archive) */}
       <View style={styles.commandBanner}>
         <View style={styles.bannerHeader}>
-          <Text style={styles.bannerTitle}>Task Command</Text>
-          <Text style={styles.bannerSub}>MST Sector 7</Text>
+          <View style={styles.headerTitleRow}>
+            <LucideIcon name="task" size={18} color={colors.primary} />
+            <Text style={styles.bannerTitle}>Task Command</Text>
+          </View>
+          <Text style={styles.bannerSub}>{activeTasksCount} Active • {archivedTasksCount} In Archive</Text>
         </View>
 
         <View style={styles.pillSelector}>
           {[
-            { key: 'daily', label: 'Daily' },
-            { key: 'weekly', label: 'Weekly' },
-            { key: 'yearly', label: 'Yearly' },
-            { key: 'custom', label: 'Custom' },
+            { key: 'daily', label: 'Daily', count: tasks.filter(t => t.category === 'daily' && !t.is_completed).length },
+            { key: 'weekly', label: 'Weekly', count: tasks.filter(t => t.category === 'weekly' && !t.is_completed).length },
+            { key: 'yearly', label: 'Yearly', count: tasks.filter(t => t.category === 'yearly' && !t.is_completed).length },
+            { key: 'custom', label: 'Custom', count: tasks.filter(t => t.category === 'custom' && !t.is_completed).length },
+            { key: 'archive', label: 'Archive', count: archivedTasksCount, isArchive: true },
           ].map((pill) => {
-            const count = tasks.filter(t => t.category === pill.key).length;
             const isActive = category === pill.key;
             return (
               <TouchableOpacity
                 key={pill.key}
                 onPress={() => setCategory(pill.key)}
-                style={[styles.pillBtn, isActive && styles.pillBtnActive]}
+                style={[
+                  styles.pillBtn, 
+                  isActive && (pill.isArchive ? styles.pillBtnArchiveActive : styles.pillBtnActive)
+                ]}
               >
+                {pill.isArchive ? (
+                  <LucideIcon 
+                    name="archive" 
+                    size={11} 
+                    color={isActive ? '#FFF' : colors.desertDark} 
+                    style={{ marginRight: 2 }}
+                  />
+                ) : null}
                 <Text style={[styles.pillText, isActive && styles.pillTextActive]}>
                   {pill.label}
                 </Text>
-                {count > 0 && (
+                {pill.count > 0 && (
                   <View style={[styles.pillBadge, isActive && styles.pillBadgeActive]}>
                     <Text style={[styles.pillBadgeText, isActive && styles.pillBadgeTextActive]}>
-                      {count}
+                      {pill.count}
                     </Text>
                   </View>
                 )}
@@ -180,17 +242,19 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
       {/* Metrics Summary Cards */}
       <View style={styles.gridTwo}>
         <View style={styles.cardBox}>
-          <Text style={styles.metricLabel}>{category} Completion</Text>
-          <Text style={styles.metricLarge}>{completedCount}/{totalCount}</Text>
-          <Text style={styles.metricHighlight}>{percentDone}% Done</Text>
+          <Text style={styles.metricLabel}>Archive Resolution</Text>
+          <Text style={styles.metricLarge}>{archivedTasksCount}/{totalTasksCount}</Text>
+          <Text style={styles.metricHighlight}>{completionRate}% Moved to Archive</Text>
         </View>
         <View style={styles.cardBox}>
           <View style={styles.rowBetween}>
-            <Text style={styles.metricLabel}>Urgent Priority</Text>
-            {urgentCount > 0 && <View style={styles.dotUrgent} />}
+            <Text style={styles.metricLabel}>Urgent Priorities</Text>
+            {urgentPending > 0 && <View style={styles.dotUrgent} />}
           </View>
-          <Text style={[styles.metricLarge, { color: colors.urgentRed }]}>{urgentCount} Urgent</Text>
-          <Text style={styles.metricSub}>Attention required</Text>
+          <Text style={[styles.metricLarge, { color: urgentPending > 0 ? colors.urgentRed : colors.sage }]}>
+            {urgentPending} Urgent
+          </Text>
+          <Text style={styles.metricSub}>Active attention required</Text>
         </View>
       </View>
 
@@ -211,35 +275,72 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
         </View>
       )}
 
-      {/* Add Task Trigger Button */}
-      <TouchableOpacity style={styles.addTriggerBtn} onPress={() => openAddModal()}>
-        <Text style={styles.addTriggerBtnText}>+ Add {category.toUpperCase()} Task</Text>
-      </TouchableOpacity>
+      {/* Add Task Trigger Button or Clear Archive Trigger */}
+      {category === 'archive' ? (
+        archivedTasksCount > 0 && (
+          <TouchableOpacity style={styles.clearArchiveBtn} onPress={handleClearArchive}>
+            <LucideIcon name="trash" size={14} color={colors.urgentRed} />
+            <Text style={styles.clearArchiveBtnText}>Clear Archive ({archivedTasksCount} tasks)</Text>
+          </TouchableOpacity>
+        )
+      ) : (
+        <TouchableOpacity style={styles.addTriggerBtn} onPress={() => openAddModal()}>
+          <LucideIcon name="plus" size={14} color="#FFF" />
+          <Text style={styles.addTriggerBtnText}>+ Add {category.toUpperCase()} Task</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Task Items List */}
       <View style={styles.taskListContainer}>
-        {currentTasks.length === 0 ? (
+        {displayedTasks.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No {category} tasks recorded</Text>
-            <Text style={styles.emptySub}>
-              Tap the "+ Add {category.toUpperCase()} Task" button above to create one.
-            </Text>
+            {category === 'archive' ? (
+              <>
+                <LucideIcon name="archive" size={28} color={colors.desertMuted} />
+                <Text style={styles.emptyTitle}>Archive is Empty</Text>
+                <Text style={styles.emptySub}>
+                  Completed tasks are automatically transferred here instead of cluttering active views.
+                </Text>
+              </>
+            ) : (
+              <>
+                <LucideIcon name="task" size={28} color={colors.desertMuted} />
+                <Text style={styles.emptyTitle}>No pending {category} tasks</Text>
+                <Text style={styles.emptySub}>
+                  Tap the "+ Add {category.toUpperCase()} Task" button above to create one.
+                </Text>
+              </>
+            )}
           </View>
         ) : (
-          currentTasks.map((t) => (
-            <View key={t.id} style={[styles.taskItem, t.is_completed && styles.taskItemDone]}>
-              <TouchableOpacity
-                style={[styles.checkCircle, t.is_completed && styles.checkCircleDone]}
-                onPress={() => toggleTaskStatus(t.id)}
-              >
-                {t.is_completed && <Text style={styles.checkCheck}>✓</Text>}
-              </TouchableOpacity>
+          displayedTasks.map((t) => (
+            <View key={t.id} style={[styles.taskItem, t.is_completed && styles.taskItemArchived]}>
+              {/* Check circle for active tasks -> sends to archive */}
+              {!t.is_completed ? (
+                <TouchableOpacity
+                  style={styles.checkCircle}
+                  onPress={() => handleCompleteTask(t.id)}
+                  title="Complete and move to Archive"
+                />
+              ) : (
+                <View style={styles.archiveCheckDone}>
+                  <LucideIcon name="check" size={12} color="#FFF" />
+                </View>
+              )}
 
               <View style={styles.taskContentBox}>
                 <View style={styles.rowBetween}>
-                  <Text style={styles.taskDateText}>
-                    {category === 'daily' ? `Today (${t.date})` : `Due: ${t.date}`}
-                  </Text>
+                  <View style={styles.badgeGroup}>
+                    <Text style={styles.taskDateText}>
+                      {t.category === 'daily' ? `Today (${t.date})` : `Due: ${t.date}`}
+                    </Text>
+                    {t.is_completed && (
+                      <View style={styles.archivedPill}>
+                        <Text style={styles.archivedPillText}>Archived: {t.category}</Text>
+                      </View>
+                    )}
+                  </View>
+
                   <View style={[
                     styles.priorityBadge, 
                     t.priority === 'Urgent' ? styles.badgeUrgent : t.priority === 'P1' ? styles.badgeP1 : styles.badgeNormal
@@ -247,23 +348,29 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
                     <Text style={[
                       styles.priorityBadgeText,
                       t.priority === 'Urgent' ? styles.badgeUrgentText : t.priority === 'P1' ? styles.badgeP1Text : styles.badgeNormalText
-                    ]}>{t.priority}</Text>
+                    ]}>{t.priority || 'Normal'}</Text>
                   </View>
                 </View>
 
-                <Text style={[styles.taskTitleText, t.is_completed && styles.taskTitleStrike]}>
-                  {t.title}
-                </Text>
+                <Text style={styles.taskTitleText}>{t.title}</Text>
 
                 {t.description ? (
                   <Text style={styles.taskDescText}>{t.description}</Text>
                 ) : null}
 
-                {/* Edit & Delete Action Row */}
+                {/* Action Row */}
                 <View style={styles.actionRow}>
-                  <TouchableOpacity style={styles.actionBtn} onPress={() => openEditModal(t)}>
-                    <Text style={styles.actionBtnText}>Edit</Text>
-                  </TouchableOpacity>
+                  {t.is_completed ? (
+                    <TouchableOpacity style={styles.restoreBtn} onPress={() => handleRestoreTask(t.id)}>
+                      <LucideIcon name="restore" size={12} color={colors.primary} />
+                      <Text style={styles.restoreBtnText}>Restore to Active</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.actionBtn} onPress={() => openEditModal(t)}>
+                      <Text style={styles.actionBtnText}>Edit</Text>
+                    </TouchableOpacity>
+                  )}
+
                   <TouchableOpacity style={styles.actionBtn} onPress={() => handleDeleteTask(t.id)}>
                     <Text style={[styles.actionBtnText, { color: colors.urgentRed }]}>Delete</Text>
                   </TouchableOpacity>
@@ -280,7 +387,7 @@ export default function TaskCommand({ tasks, onSaveTasks }) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>
-              {editingTaskId ? 'Modify Task' : `New ${category.toUpperCase()} Task`}
+              {editingTaskId ? 'Modify Task' : `New ${category === 'archive' ? 'Daily' : category.toUpperCase()} Task`}
             </Text>
 
             <TextInput
@@ -372,6 +479,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   bannerTitle: {
     fontSize: typography.lg,
     fontWeight: 'bold',
@@ -396,13 +508,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 7,
     borderRadius: 8,
-    gap: 4,
+    gap: 3,
   },
   pillBtnActive: {
     backgroundColor: colors.primary,
   },
+  pillBtnArchiveActive: {
+    backgroundColor: colors.desertDark,
+  },
   pillText: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '600',
     color: colors.desertDark,
   },
@@ -420,7 +535,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.25)',
   },
   pillBadgeText: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: 'bold',
     color: colors.desertDark,
   },
@@ -457,7 +572,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   metricHighlight: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: 'bold',
     color: colors.primary,
   },
@@ -496,7 +611,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: 10,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -507,17 +625,33 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
+  clearArchiveBtn: {
+    backgroundColor: colors.urgentRedBg,
+    borderWidth: 1,
+    borderColor: colors.urgentRed,
+    borderRadius: 12,
+    paddingVertical: 9,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  clearArchiveBtnText: {
+    color: colors.urgentRed,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
   taskListContainer: {
     gap: spacing.sm,
   },
   emptyCard: {
     backgroundColor: colors.cardSurface,
     borderRadius: 14,
-    padding: 24,
+    padding: 28,
     borderWidth: 1,
     borderColor: colors.desertBorder,
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   emptyTitle: {
     fontSize: 13,
@@ -539,9 +673,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 10,
   },
-  taskItemDone: {
-    opacity: 0.65,
+  taskItemArchived: {
     backgroundColor: colors.cardSurfaceAlt,
+    borderColor: 'rgba(222, 200, 165, 0.7)',
   },
   checkCircle: {
     width: 22,
@@ -554,18 +688,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 2,
   },
-  checkCircleDone: {
+  archiveCheckDone: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     backgroundColor: colors.sage,
-    borderColor: colors.sage,
-  },
-  checkCheck: {
-    color: '#FFF',
-    fontSize: 11,
-    fontWeight: 'bold',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
   },
   taskContentBox: {
     flex: 1,
     gap: 3,
+  },
+  badgeGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  archivedPill: {
+    backgroundColor: 'rgba(62, 106, 94, 0.15)',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  archivedPillText: {
+    fontSize: 8.5,
+    fontWeight: 'bold',
+    color: colors.sage,
+    textTransform: 'uppercase',
   },
   taskDateText: {
     fontSize: 10,
@@ -576,9 +727,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: 'bold',
     color: colors.desertDark,
-  },
-  taskTitleStrike: {
-    textDecorationLine: 'line-through',
   },
   taskDescText: {
     fontSize: 11,
@@ -621,6 +769,17 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     borderTopWidth: 1,
     borderColor: 'rgba(222, 200, 165, 0.4)',
+  },
+  restoreBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 2,
+  },
+  restoreBtnText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: colors.primary,
   },
   actionBtn: {
     paddingVertical: 2,

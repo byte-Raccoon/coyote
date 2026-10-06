@@ -30,6 +30,7 @@ def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
         category=payload.category,
         is_completed=payload.is_completed,
         due_date=payload.due_date,
+        priority=payload.priority or "Normal",
         device_id=settings.DEVICE_ID,
         version=1,
     )

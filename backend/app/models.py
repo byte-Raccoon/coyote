@@ -20,9 +20,10 @@ class Task(SyncableModel, Base):
 
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    category = Column(String(32), nullable=False, default="daily") # daily, weekly, yearly
+    category = Column(String(32), nullable=False, default="daily") # daily, weekly, yearly, custom
     is_completed = Column(Boolean, nullable=False, default=False)
     due_date = Column(String(64), nullable=True)
+    priority = Column(String(32), nullable=True, default="Normal")
 
 class Note(SyncableModel, Base):
     __tablename__ = "notes"

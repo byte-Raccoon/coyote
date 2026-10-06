@@ -6,13 +6,13 @@
                MacBook Air (macOS)
 ┌────────────────────────────────────────────────────────┐
 │                                                        │
-│   Web Frontend (React + Tailwind)                      │
+│   Web Frontend (React + Tailwind, Lucide Icons)        │
 │   http://localhost:3333                                │
 │          │                                             │
 │          ▼                                             │
 │   FastAPI Backend (port 3335, bound to 0.0.0.0)        │
 │          │                                             │
-│          ├── SQLite (Initial dev)                      │
+│          ├── SQLite (Initial dev: coyote.db with WAL)   │
 │          └── PostgreSQL (Future production)            │
 └──────────▲─────────────────────────────────────────────┘
            │
@@ -22,43 +22,40 @@
 ┌──────────▼─────────────────────────────────────────────┐
 │   OnePlus (Android App - React Native / Expo)          │
 │          │                                             │
-│          ▼                                             │
-│   Local SQLite (Offline-first storage & change queue)  │
+│          ├── Unified Lucide Icons via vector-icons     │
+│          └── AsyncStorage / SQLite (Offline storage)   │
 └────────────────────────────────────────────────────────┘
 ```
 
 ## 3. Product domains
 
 - Dashboard
-- Tasks / Planner
-- Journal
-- Academic
-- DSA
-- Project Ideas
-- General Notes
+- Tasks / Planner (Daily, Weekly, Yearly, Custom, Archive)
+- DSA Arena (Weekly Target, Questions Done Today, The Grind heatmap)
+- Project Ideas Vault (Architecture concepts, domain tags, statuses)
+
+*(Academic domain was decommissioned per user instruction in Decision D015)*
 
 ## 4. Platform mapping
 
 ### macOS
-Dashboard → Task (Daily/Weekly/Yearly) → Journal → Academic → DSA → Project Ideas → General Notes
+Dashboard → Tasks (Daily/Weekly/Yearly/Custom/Archive) → DSA Arena → Project Ideas Vault
 
 ### Android
-Task Command (Daily/Weekly/Yearly/Custom) → Academic Portal (Courses/Exams/Lectures/Audit) → Dashboard → DSA Arena (Weekly Target/Today/The Grind) → Project Ideas Vault → Sync Engine
+Dashboard → Task Command (Daily/Weekly/Yearly/Custom/Archive) → DSA Arena (Weekly Target/Today/The Grind) → Project Ideas Vault → Sync Engine
 
-The platform-specific organization comes directly from `PROJECT.md`.
+Identical icons (`LayoutDashboard`, `CheckSquare`, `Code2`, `Lightbulb`, `Archive`) are used across both platforms for intuitive cross-device recognition.
 
-## 5. Sync questions to resolve
-- Where is canonical data stored?
-- How do both clients read/write it?
-- What happens offline?
-- What happens when both devices edit the same item?
-- How are deletions synchronized?
+## 5. Sync topology
+- Source of truth: Mac SQLite database (`coyote.db`).
+- Protocol: REST push & pull over local LAN or OnePlus hotspot.
+- Conflict resolution: LWW with version increment and `updated_at`.
+- Offline support: Full local offline persistence on both clients.
 
 ## 6. Logical entities
-Likely entities derived from the product scope:
-Task, Journal Entry, Academic Item, DSA Item/Target, Project Idea, General Note, Goal/Planner Item.
-
-This is not yet a finalized database schema.
+- `Task`: `id`, `title`, `description`, `category` (daily, weekly, yearly, custom), `priority`, `due_date`, `is_completed`, `completed_at`, `version`, `updated_at`.
+- `DSA State`: `weeklyTarget`, `dailyLogs` (YYYY-MM-DD -> count), `questions` (id, title, difficulty, date).
+- `Project Idea`: `id`, `title`, `tag` (#Systems, #AI, etc.), `status` (Concept, Prototyping, Shipped), `description`, `version`.
 
 ## 7. Future development-agent architecture
 
@@ -72,7 +69,5 @@ This is not yet a finalized database schema.
                        ▼
                     Reviewer
 ```
-
-This is a future learning target, not the application's current architecture.
 
 Major architectural decisions belong in `DECISIONS.md`.

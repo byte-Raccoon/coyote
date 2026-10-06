@@ -10,39 +10,44 @@
 # features
 - macos 
   - for laptop it will be hosted on localhost (frontend on port 3333, backend API on port 3335)
-  - it will contain features 
+  - styled with Coyote Desert Workspace design tokens
+  - unified Lucide icons matching the mobile app
+  - features:
     - Dashboard
-    - Task
-      - Daily
-      - Weekly
-      - Yearly
-    - Journal
-    - Academic
-    - DSA
-    - Project Ideas
-    - General Notes
+      - Real-time dynamic tactical metrics (Daily Pending, Archive Resolution, DSA Velocity, Ideas Vault)
+      - Today's Tactical Priorities quick action list
+      - OnePlus Hotspot & LAN sync guide
+    - Task Command
+      - Daily (Auto-locked to current date, full CRUD, move to Archive on completion)
+      - Weekly, Yearly, Custom (Date pickers, priority tags, full CRUD)
+      - Task Archive (Dedicated completed tasks view with restore & clear options)
+    - DSA Arena
+      - Feature 1: Weekly Target (Adjustable goal, live sprint progress bar)
+      - Feature 2: Questions Done Today (Quick +1/-1 counter and problem detail logger)
+      - Feature 3: The Grind (Monthly activity calendar heatmap with intensity levels)
+    - Project Ideas Vault (Replaced Journal & Notes)
+      - Architectural concepts, tech stacks, execution roadmaps
+      - Domain tags (#Systems, #AI, #Mobile, #Web)
+      - Status tags (Concept, Prototyping, Shipped) with full CRUD
 
 - android phone
   - it will be as an application (OnePlus / Android, React Native Expo)
   - styled with Coyote Desert Workspace design tokens
+  - unified Lucide icons matching the web client
   - swipe-enabled horizontal paging between sections
-  - it will contain features:
+  - features:
     - Dashboard
-      - 2x2 Tactical Command Metrics (Daily Tasks, DSA Velocity, Ideas Logged, Academic Status)
+      - 2x2 Tactical Command Metrics (Daily Tasks, DSA Sprint, Project Ideas, Task Archive)
       - Next Tactical Objective quick jump
     - Task Command
-      - Daily (Auto-locked to current date, execution completion metrics, priority tags, full CRUD)
+      - Daily (Auto-locked to current date, priority tags, full CRUD)
       - Weekly, Yearly, Custom (Custom date selection, deadlines, domain filters, full CRUD)
-    - Academic Portal
-      - Enrolled courses with credits and syllabus (Add, Edit, Delete)
-      - Milestone Exams and Midterms with horizon dates (Add, Edit, Delete)
-      - Lecture schedule blocks (Add, Edit, Delete)
-      - Degree audit credit tracker
+      - Task Archive (Dedicated tab for completed tasks with restore & clear options)
     - DSA Arena
       - Feature 1: Weekly Target (Adjustable goal, live weekly progress bar)
       - Feature 2: Questions Done Today (Quick +1/-1 counter and problem detail logger)
       - Feature 3: The Grind (Monthly activity calendar heatmap with intensity levels)
-    - Project Ideas Vault (Replaces Journal)
+    - Project Ideas Vault
       - Architectural concepts, tech stacks, roadmap notes
       - Domain tags (#Systems, #AI, #Mobile, #Web)
       - Status tags (Concept, Prototyping, Shipped) with full CRUD

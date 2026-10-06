@@ -16,21 +16,21 @@ import { storage } from './src/storage/storage';
 
 // Domain Components
 import TaskCommand from './src/components/TaskCommand';
-import AcademicPortal from './src/components/AcademicPortal';
 import DashboardView from './src/components/DashboardView';
 import DsaArena from './src/components/DsaArena';
 import ProjectIdeas from './src/components/ProjectIdeas';
 import SyncView from './src/components/SyncView';
+import LucideIcon from './src/components/LucideIcon';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight || 40) : 0;
 
+// Four Core Sections (Academic removed per user instruction)
 const SECTIONS = [
-  { key: 'task', label: 'Tasks', badge: 'Task Command', icon: '✓' },
-  { key: 'academic', label: 'Academic', badge: 'Academic Portal', icon: '🎓' },
-  { key: 'dashboard', label: 'Dashboard', badge: 'Command Grid', icon: '⊞' },
-  { key: 'dsa', label: 'DSA', badge: 'DSA Arena', icon: '⌨' },
-  { key: 'ideas', label: 'Ideas', badge: 'Project Vault', icon: '💡' },
+  { key: 'dashboard', label: 'Dashboard', badge: 'Command Grid', icon: 'dashboard' },
+  { key: 'task', label: 'Tasks', badge: 'Task Command', icon: 'task' },
+  { key: 'dsa', label: 'DSA', badge: 'DSA Arena', icon: 'dsa' },
+  { key: 'ideas', label: 'Ideas', badge: 'Project Vault', icon: 'ideas' },
 ];
 
 export default function App() {
@@ -41,7 +41,6 @@ export default function App() {
 
   // Core Persistent State
   const [tasks, setTasks] = useState([]);
-  const [academics, setAcademics] = useState([]);
   const [dsaState, setDsaState] = useState({ weeklyTarget: 15, dailyLogs: {}, questions: [] });
   const [ideas, setIdeas] = useState([]);
   const [settings, setSettings] = useState({ hostIp: '192.168.1.100', port: 3335, deviceId: 'oneplus-phone' });
@@ -50,11 +49,10 @@ export default function App() {
   useEffect(() => {
     async function init() {
       const data = await storage.loadAllData();
-      setTasks(data.tasks);
-      setAcademics(data.academics);
-      setDsaState(data.dsa);
-      setIdeas(data.ideas);
-      setSettings(data.settings);
+      setTasks(data.tasks || []);
+      setDsaState(data.dsa || { weeklyTarget: 15, dailyLogs: {}, questions: [] });
+      setIdeas(data.ideas || []);
+      setSettings(data.settings || { hostIp: '192.168.1.100', port: 3335, deviceId: 'oneplus-phone' });
       setLoading(false);
     }
     init();
@@ -64,11 +62,6 @@ export default function App() {
   const handleSaveTasks = (newTasks) => {
     setTasks(newTasks);
     storage.saveTasks(newTasks);
-  };
-
-  const handleSaveAcademics = (newAcademics) => {
-    setAcademics(newAcademics);
-    storage.saveAcademics(newAcademics);
   };
 
   const handleSaveDsa = (newDsaState) => {
@@ -134,12 +127,12 @@ export default function App() {
             <View style={styles.titleRow}>
               <Text style={styles.brandTitle}>COYOTE</Text>
               <View style={styles.vBadge}>
-                <Text style={styles.vBadgeText}>V2.4</Text>
+                <Text style={styles.vBadgeText}>V2.5</Text>
               </View>
             </View>
             <View style={styles.statusRow}>
               <View style={styles.statusDot} />
-              <Text style={styles.statusLabel}>Swipe Enabled • Swipe ← →</Text>
+              <Text style={styles.statusLabel}>Swipe ← → • {activeSection.label}</Text>
             </View>
           </View>
         </View>
@@ -148,8 +141,14 @@ export default function App() {
           style={styles.activeBadge} 
           onPress={() => setIsSyncViewOpen(!isSyncViewOpen)}
         >
+          <LucideIcon 
+            name={isSyncViewOpen ? 'close' : activeSection.icon} 
+            size={12} 
+            color={colors.primary} 
+            style={{ marginRight: 4 }} 
+          />
           <Text style={styles.activeBadgeText}>
-            {isSyncViewOpen ? '✕ Close Sync' : activeSection.badge}
+            {isSyncViewOpen ? 'Close Sync' : activeSection.badge}
           </Text>
         </TouchableOpacity>
       </View>
@@ -177,26 +176,11 @@ export default function App() {
           onMomentumScrollEnd={handleScrollEnd}
           style={styles.pager}
         >
-          {/* PAGE 0: TASKS */}
-          <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              <TaskCommand tasks={tasks} onSaveTasks={handleSaveTasks} />
-            </ScrollView>
-          </View>
-
-          {/* PAGE 1: ACADEMICS */}
-          <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              <AcademicPortal academics={academics} onSaveAcademics={handleSaveAcademics} />
-            </ScrollView>
-          </View>
-
-          {/* PAGE 2: DASHBOARD */}
+          {/* PAGE 0: DASHBOARD */}
           <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               <DashboardView
                 tasks={tasks}
-                academics={academics}
                 dsaState={dsaState}
                 ideas={ideas}
                 onNavigate={navigateToSection}
@@ -204,14 +188,21 @@ export default function App() {
             </ScrollView>
           </View>
 
-          {/* PAGE 3: DSA */}
+          {/* PAGE 1: TASKS (WITH ARCHIVE) */}
+          <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              <TaskCommand tasks={tasks} onSaveTasks={handleSaveTasks} />
+            </ScrollView>
+          </View>
+
+          {/* PAGE 2: DSA ARENA */}
           <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               <DsaArena dsaState={dsaState} onSaveDsa={handleSaveDsa} />
             </ScrollView>
           </View>
 
-          {/* PAGE 4: PROJECT IDEAS (REPLACED JOURNAL) */}
+          {/* PAGE 3: PROJECT IDEAS VAULT */}
           <View style={[styles.pageWrapper, { width: SCREEN_WIDTH }]}>
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               <ProjectIdeas ideas={ideas} onSaveIdeas={handleSaveIdeas} />
@@ -220,19 +211,23 @@ export default function App() {
         </ScrollView>
       )}
 
-      {/* BOTTOM NAVIGATION BAR */}
+      {/* BOTTOM NAVIGATION BAR WITH UNIFIED ICONS */}
       <View style={styles.bottomNav}>
         {SECTIONS.map((item, idx) => {
           const isActive = !isSyncViewOpen && activeIndex === idx;
+          const activeColor = colors.primary;
+          const inactiveColor = colors.desertMuted;
           return (
             <TouchableOpacity
               key={item.key}
               onPress={() => handleTabPress(idx)}
               style={styles.navItem}
             >
-              <Text style={[styles.navIcon, isActive && styles.navIconActive]}>
-                {item.icon}
-              </Text>
+              <LucideIcon
+                name={item.icon}
+                size={20}
+                color={isActive ? activeColor : inactiveColor}
+              />
               <Text style={[styles.navLabel, isActive && styles.navLabelActive]}>
                 {item.label}
               </Text>
@@ -337,6 +332,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   activeBadgeText: {
     color: colors.primary,
@@ -368,7 +365,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: colors.desertBorder,
     flexDirection: 'row',
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingBottom: 14,
     justifyContent: 'space-around',
     shadowColor: '#000',
@@ -379,20 +376,13 @@ const styles = StyleSheet.create({
   navItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 4,
-  },
-  navIcon: {
-    fontSize: 16,
-    color: colors.desertMuted,
-  },
-  navIconActive: {
-    color: colors.primary,
+    paddingVertical: 2,
+    gap: 3,
   },
   navLabel: {
     fontSize: 10,
     fontWeight: '500',
     color: colors.desertMuted,
-    marginTop: 2,
   },
   navLabelActive: {
     color: colors.primary,

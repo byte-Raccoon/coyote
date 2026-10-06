@@ -47,7 +47,7 @@ Do not force identical navigation on both platforms. `PROJECT.md` intentionally 
 - postgreSQL for server
 
 ## D008 — Sync protocol
-**Status:**
+**Status:** Accepted
 - REST API
 
 ## D009 — Authentication / identity
@@ -58,7 +58,6 @@ Do not force identical navigation on both platforms. `PROJECT.md` intentionally 
 **Status:** Open
 
 Every change gets:
-
 uuid
 device_id
 updated_at
@@ -93,15 +92,28 @@ version
 
 **Reason:** Simple, private, direct device-to-device local network synchronization without third-party cloud infrastructure.
 
-## Decision format
+## D015 — Decommission Academic domain
+**Status:** Accepted
+- Removed Academic Portal and academic entities from both web and mobile applications.
+- Core domains streamlined to Dashboard, Tasks, DSA Arena, and Project Ideas Vault.
 
-For future major decisions record:
-- Decision
-- Status
-- Context
-- Options considered
-- Chosen approach
-- Reason
-- Consequences
+**Reason:** Explicit user instruction to simplify product focus on high-impact daily execution, algorithmic practice, and project blueprints.
 
-Never silently rewrite an old decision; add a new decision explaining the change.
+## D016 — Task Archive pattern
+**Status:** Accepted
+- Rather than merely striking through completed tasks in active lists, completed tasks immediately transition into a dedicated **Archive** view.
+- Active views (`daily`, `weekly`, `yearly`, `custom`) strictly display actionable, uncompleted tasks.
+- Archive view provides full restore/unarchive capability (returning tasks to their active category) and clear/delete actions.
+
+**Reason:** Prevents visual clutter in active backlogs and maintains clean operational velocity on both macOS and mobile devices.
+
+## D017 — Unified iconography across Web and Mobile
+**Status:** Accepted
+- Mobile uses vector icons (`@expo/vector-icons`) mapping 1:1 to web's `lucide-react` icons:
+  - Dashboard: `LayoutDashboard` (`view-dashboard-outline`)
+  - Tasks: `CheckSquare` (`checkbox-marked-outline`)
+  - DSA Arena: `Code2` (`code-tags`)
+  - Project Ideas: `Lightbulb` (`lightbulb-outline`)
+  - Task Archive: `Archive` (`archive-outline`)
+
+**Reason:** Guarantees instantaneous visual recognition across both devices without emoji rendering discrepancies across platforms.
